@@ -49,7 +49,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Seats,CompanyId")] Bus bus)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BusNumber")] Bus bus)
         {
             if (id != bus.Id)
             {
