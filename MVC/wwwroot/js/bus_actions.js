@@ -1,4 +1,4 @@
-var busIdToManage;
+var busIdToDelete;
 
 function submitNewBus() {
     var formData = $("#createBusForm").serialize();
@@ -19,17 +19,16 @@ function submitNewBus() {
 }
 
 function showDeleteBusModal(busId) {
-    busIdToManage = busId;
+    busIdToDelete = busId;
     var deleteBusModal = new bootstrap.Modal(document.getElementById('deleteBusModal'));
     deleteBusModal.show();
 }
 
 function deleteBus() {
-    console.log("BUS ID TO BE DELETED: " + busIdToManage);
     $.ajax({
         type: "POST",
         url: "/Bus/Delete",
-        data: { id: busIdToManage },
+        data: { id: busIdToDelete },
         success: function (response) {
             var deleteBusModal = new bootstrap.Modal(document.getElementById('deleteBusModal'));
             deleteBusModal.hide();
@@ -41,4 +40,27 @@ function deleteBus() {
     });
 }
 
+function showEditBusModal(busId) {
+    document.getElementById('editBusId').value = busId;
+    var editBusModal = new bootstrap.Modal(document.getElementById('editBusModal'));
+    editBusModal.show();
+}
 
+function editBus() {
+    var formData = $("#editBusForm").serialize();
+    console.log(formData);
+    
+    $.ajax({
+        type: "POST",
+        url: "/Bus/Edit",
+        data: formData,
+        success: function (response) {
+            var editBusModal = new bootstrap.Modal(document.getElementById('editBusModal'));
+            editBusModal.hide();
+            location.reload();
+        },
+        error: function (response) {
+            console.error("Error while editing the bus:", response.responseText);
+        },
+    });
+}

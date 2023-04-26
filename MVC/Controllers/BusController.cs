@@ -48,8 +48,8 @@ namespace MVC.Controllers
             return View(bus);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BusNumber")] Bus bus)
+        [HttpPost, ActionName("Edit")]
+        public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,BusNumber")] Bus bus)
         {
             if (id != bus.Id)
             {

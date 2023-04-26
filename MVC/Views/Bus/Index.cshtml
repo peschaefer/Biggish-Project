@@ -27,7 +27,7 @@
                 <tr>
                     <td>@bus.BusNumber</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@bus.Id" class="btn btn-secondary">Edit</a>
+                        <a onclick="showEditBusModal(@bus.Id)" class="btn btn-secondary">Edit</a>
                         <a onclick="showDeleteBusModal(@bus.Id)" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
@@ -41,6 +41,9 @@
 
 <!-- Delete Bus Modal -->
 @await Html.PartialAsync("_DeleteBusModal")
+
+<!-- Edit Bus Modal -->
+@await Html.PartialAsync("_EditBusModal", new MVC.Models.Bus())
 
 
 @section Scripts {

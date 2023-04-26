@@ -46,9 +46,14 @@ public class BusRepository : IBusRepository
             throw new Exception("Bus not found");
         }
 
-        _context.Buses.Update(bus);
+        // Update the found bus with the new bus number
+        foundBus.BusNumber = bus.BusNumber;
+
+        // Mark the found bus as modified
+        _context.Entry(foundBus).State = EntityState.Modified;
+
         await _context.SaveChangesAsync();
-        return bus;
+        return foundBus;
     }
 
     public async Task<Bus> DeleteBus(int id)
