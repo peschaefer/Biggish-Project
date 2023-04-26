@@ -1,18 +1,49 @@
 @model IEnumerable<MVC.Models.Bus>
 
+@{
+    ViewData["Title"] = "Bus Index";
+    <link rel="stylesheet" href="~/css/bus_index.css" />
+}
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>Index</title>
-</head>
-<body>
 <div>
-     @foreach (var bus in Model)
-     {
-         <p>@bus.BusNumber</p>
-     }
+    <div id="bus-index-header">
+        <h1>Bus Index</h1>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBusModal">
+            Create Bus
+        </button>
+    </div>
+    <hr id="separator">
+    <table id="bus-table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Bus Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bus in Model)
+            {
+                <tr>
+                    <td>@bus.BusNumber</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@bus.Id" class="btn btn-secondary">Edit</a>
+                        <a onclick="showDeleteBusModal(@bus.Id)" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-</body>
-</html>
+
+<!-- Create Bus Modal -->
+@await Html.PartialAsync("_CreateBusModal", new MVC.Models.Bus())
+
+<!-- Delete Bus Modal -->
+@await Html.PartialAsync("_DeleteBusModal")
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/bus_actions.js"></script>
+}

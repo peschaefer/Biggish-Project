@@ -1,0 +1,31 @@
+@model MVC.Models.Bus
+
+@{
+    <link rel="stylesheet" href="~/css/bus_index.css" />
+}
+
+<div class="modal fade" id="createBusModal" tabindex="-1" aria-labelledby="createBusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div id="createBusModalContent" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="createBusModalLabel">Create Bus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createBusForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div id="bus-number-input" class="form-group">
+                        <label asp-for="BusNumber" class="control-label">Bus Number: </label>
+                        <input asp-for="BusNumber" name="BusNumber" class="form-control" />
+                        <span asp-validation-for="BusNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button id="create-button" type="button" class="btn btn-primary" onclick="submitNewBus()">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
