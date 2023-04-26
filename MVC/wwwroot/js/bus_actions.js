@@ -1,4 +1,12 @@
 var busIdToDelete;
+var selectedBusIds;
+
+$(document).ready(function () {
+    // Handle "select all" checkbox
+    $("#selectAllCheckbox").on("change", function () {
+        $('input[name="busCheckbox"]').prop("checked", this.checked);
+    });
+});
 
 function submitNewBus() {
     var formData = $("#createBusForm").serialize();
@@ -18,27 +26,33 @@ function submitNewBus() {
     });
 }
 
-function showDeleteBusModal(busId) {
-    busIdToDelete = busId;
+function showDeleteBusModal() {
+    selectedBusIds = $('input[name="busCheckbox"]:checked').map(function () {
+        return parseInt($(this).data('bus-id'));
+    }).get();
+
     var deleteBusModal = new bootstrap.Modal(document.getElementById('deleteBusModal'));
     deleteBusModal.show();
 }
 
-function deleteBus() {
+function deleteSelectedBuses() {
     $.ajax({
         type: "POST",
         url: "/Bus/Delete",
-        data: { id: busIdToDelete },
+        data: { ids: selectedBusIds },
+        traditional: true,
         success: function (response) {
+            $("#selectAllCheckbox").prop('checked', false);
+            $('input[name="busCheckbox"]').prop('checked', false);
             var deleteBusModal = new bootstrap.Modal(document.getElementById('deleteBusModal'));
             deleteBusModal.hide();
             location.reload();
         },
         error: function (response) {
-            console.error("Error while deleting the bus:", response);
+            console.error("Error while deleting the buses:", response);
         },
     });
-}
+}    
 
 function showEditBusModal(busId) {
     document.getElementById('editBusId').value = busId;

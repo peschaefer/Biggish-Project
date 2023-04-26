@@ -28,10 +28,9 @@
   padding-left: 20px;
 }
 
-#bus-table th:last-child,
 #bus-table td:last-child {
     text-align: right;
-    padding-right: 10px;
+    padding-right: 50px;
 }
 
 #bus-table th:last-child {

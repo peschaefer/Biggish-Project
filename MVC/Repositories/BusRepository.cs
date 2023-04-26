@@ -9,7 +9,7 @@ public interface IBusRepository
     Task<Bus> GetBus(int id);
     Task<int> AddBus(Bus bus);
     Task<Bus> UpdateBus(Bus bus);
-    Task<Bus> DeleteBus(int id);
+    Task<List<Bus>> DeleteBuses(int[] ids);
 }
 
 public class BusRepository : IBusRepository
@@ -56,16 +56,22 @@ public class BusRepository : IBusRepository
         return foundBus;
     }
 
-    public async Task<Bus> DeleteBus(int id)
+    public async Task<List<Bus>> DeleteBuses(int[] ids)
     {
-        var foundBus = await _context.Buses.FindAsync(id);
-        if (foundBus == null)
+        var busesToDelete = new List<Bus>();
+
+        foreach (var id in ids)
         {
-            throw new Exception("Bus not found");
+            var foundBus = await _context.Buses.FindAsync(id);
+            if (foundBus == null)
+            {
+                throw new Exception($"Bus with ID {id} not found");
+            }
+            busesToDelete.Add(foundBus);
         }
 
-        _context.Buses.Remove(foundBus);
+        _context.Buses.RemoveRange(busesToDelete);
         await _context.SaveChangesAsync();
-        return foundBus;
+        return busesToDelete;
     }
 }

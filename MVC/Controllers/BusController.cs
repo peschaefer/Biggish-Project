@@ -85,11 +85,11 @@ namespace MVC.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int[] ids)
         {
             try
             {
-                await _busRepository.DeleteBus(id);
+                await _busRepository.DeleteBuses(ids);
             }
             catch (Exception)
             {
