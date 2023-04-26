@@ -8,10 +8,10 @@
 <div>
     <div id="bus-index-header">
         <h1>Bus Index</h1>
-
-        <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteBusModal()">Delete Selected</button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBusModal">Create Bus</button>
-
+        <div id="buttons">
+            <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteBusModal()">Delete Selected</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBusModal">Create Bus</button>
+        </div>
     </div>
     <hr id="separator">
     <table id="bus-table" class="table table-striped">
