@@ -1,0 +1,63 @@
+#bus-index-viewer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#bus-index-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0px 10px 0px;
+    padding-right: 10px;
+}
+
+#separator {
+    border: none;
+    margin-bottom: 20px;
+}
+
+#bus-table {
+    vertical-align: middle;
+}
+
+#bus-table th:first-child,
+#bus-table td:first-child {
+  text-align: left;
+  padding-left: 20px;
+}
+
+#bus-table td:last-child {
+    text-align: right;
+    padding-right: 50px;
+}
+
+#bus-table th:last-child {
+    text-align: right;
+    padding-right: 50px;
+}
+
+#busModalContent {
+    padding: 15px 30px;
+}
+
+#bus-number-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    vertical-align: middle;
+    margin-bottom: 20px;
+}
+
+#bus-number-input > label {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    margin-right: 50px;
+}
+
+#create-button {
+    display: flex;
+    margin-left: auto;
+}
