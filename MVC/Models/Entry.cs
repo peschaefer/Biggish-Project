@@ -10,4 +10,5 @@ public class Entry
     public Bus Bus { get; set; }
     public Loop Loop { get; set; }
     public Stop Stop { get; set; }
+    public Route Route { get; set; }
 }
