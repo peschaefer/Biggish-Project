@@ -13,7 +13,7 @@ public class BigishProjContext: DbContext
     
     public string DbPath { get; }
 
-    public BigishProjContext()
+    public BigishProjContext(DbContextOptions<BigishProjContext> options) : base(options)
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);

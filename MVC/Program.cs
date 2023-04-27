@@ -1,13 +1,23 @@
 using MVC.Models;
+using MVC.Repositories;
 
-using var db = new BigishProjContext();
-
-Console.WriteLine($"Database path: {db.DbPath}");
+// using var db = new BigishProjContext();
+//
+// Console.WriteLine($"Database path: {db.DbPath}");
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("BigishProj") ?? "Data Source=BigishProj.db";
+
+builder.Services.AddSqlite<BigishProjContext>(connectionString);
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IBusRepository, BusRepository>();
+builder.Services.AddScoped<IEntryRepository, EntryRepository>();
+builder.Services.AddScoped<ILoopRepository, LoopRepository>();
+
 
 var app = builder.Build();
 
@@ -28,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Driver}/{action=SelectBusLoop}/{id?}");
 
 app.Run();

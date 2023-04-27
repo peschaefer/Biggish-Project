@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Select Bus and Loop";
+    SelectList busSelectList = ViewBag.BusId as SelectList;
+    SelectList loopSelectList = ViewBag.LoopId as SelectList;
+}
+
+<h1>Select Bus and Loop</h1>
+
+<form asp-controller="Driver" asp-action="StartDriving" method="post">
+    <div>
+        <label for="BusId">Bus Number</label>
+        <select name="BusId" id="BusId" asp-items="busSelectList"></select>
+    </div>
+    <div>
+        <label for="LoopId">Loop</label>
+        <select name="LoopId" id="LoopId" asp-items="loopSelectList"></select>
+    </div>
+    <div>
+        <input type="submit" value="Start Driving" />
+    </div>
+</form>
