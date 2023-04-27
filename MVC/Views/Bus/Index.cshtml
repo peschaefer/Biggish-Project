@@ -1,0 +1,18 @@
+@model IEnumerable<MVC.Models.Bus>
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+<div>
+     @foreach (var bus in Model)
+     {
+         <p>@bus.BusNumber</p>
+     }
+</div>
+</body>
+</html>
