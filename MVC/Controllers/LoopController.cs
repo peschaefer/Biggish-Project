@@ -6,37 +6,36 @@ using MVC.Repositories;
 
 namespace MVC.Controllers
 {
-    public class BusController : Controller
+    public class LoopController : Controller
     {
-        private readonly IBusRepository _busRepository;
+        private readonly ILoopRepository _loopRepository;
 
-        public BusController(IBusRepository busRepository)
+        public LoopController(ILoopRepository loopRepository)
         {
-            _busRepository = busRepository;
+            _loopRepository = loopRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _busRepository.GetBuses());
+            return View(await _loopRepository.GetLoops());
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,BusNumber")] Bus bus)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Loop loop)
         {
             if (ModelState.IsValid)
             {
-                await _busRepository.AddBus(bus);
+                await _loopRepository.AddLoop(loop);
                 return RedirectToAction(nameof(Index));
             }
 
             return RedirectToAction(nameof(Index));
-
         }
         
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,BusNumber")] Bus bus)
+        public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,Name")] Loop loop)
         {
-            if (id != bus.Id)
+            if (id != loop.Id)
             {
                 return NotFound();
             }
@@ -45,7 +44,7 @@ namespace MVC.Controllers
             {
                 try
                 {
-                    await _busRepository.UpdateBus(bus);
+                    await _loopRepository.UpdateLoop(loop);
                 }
                 catch (Exception)
                 {
@@ -63,7 +62,7 @@ namespace MVC.Controllers
         {
             try
             {
-                await _busRepository.DeleteBuses(ids);
+                await _loopRepository.DeleteLoops(ids);
             }
             catch (Exception)
             {

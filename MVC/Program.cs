@@ -38,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Driver}/{action=SelectBusLoop}/{id?}");
+    pattern: "{controller=Bus}/{action=Index}/{id?}");
 
 app.Run();
