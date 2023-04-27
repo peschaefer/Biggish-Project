@@ -48,8 +48,8 @@ namespace MVC.Controllers
             return View(bus);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BusNumber")] Bus bus)
+        [HttpPost, ActionName("Edit")]
+        public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,BusNumber")] Bus bus)
         {
             if (id != bus.Id)
             {
@@ -85,11 +85,11 @@ namespace MVC.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int[] ids)
         {
             try
             {
-                await _busRepository.DeleteBus(id);
+                await _busRepository.DeleteBuses(ids);
             }
             catch (Exception)
             {

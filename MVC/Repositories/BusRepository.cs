@@ -9,7 +9,7 @@ public interface IBusRepository
     Task<Bus> GetBus(int id);
     Task<int> AddBus(Bus bus);
     Task<Bus> UpdateBus(Bus bus);
-    Task<Bus> DeleteBus(int id);
+    Task<List<Bus>> DeleteBuses(int[] ids);
 }
 
 public class BusRepository : IBusRepository
@@ -46,21 +46,32 @@ public class BusRepository : IBusRepository
             throw new Exception("Bus not found");
         }
 
-        _context.Buses.Update(bus);
-        await _context.SaveChangesAsync();
-        return bus;
-    }
+        // Update the found bus with the new bus number
+        foundBus.BusNumber = bus.BusNumber;
 
-    public async Task<Bus> DeleteBus(int id)
-    {
-        var foundBus = await _context.Buses.FindAsync(id);
-        if (foundBus == null)
-        {
-            throw new Exception("Bus not found");
-        }
+        // Mark the found bus as modified
+        _context.Entry(foundBus).State = EntityState.Modified;
 
-        _context.Buses.Remove(foundBus);
         await _context.SaveChangesAsync();
         return foundBus;
+    }
+
+    public async Task<List<Bus>> DeleteBuses(int[] ids)
+    {
+        var busesToDelete = new List<Bus>();
+
+        foreach (var id in ids)
+        {
+            var foundBus = await _context.Buses.FindAsync(id);
+            if (foundBus == null)
+            {
+                throw new Exception($"Bus with ID {id} not found");
+            }
+            busesToDelete.Add(foundBus);
+        }
+
+        _context.Buses.RemoveRange(busesToDelete);
+        await _context.SaveChangesAsync();
+        return busesToDelete;
     }
 }
