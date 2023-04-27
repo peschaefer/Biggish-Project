@@ -54,7 +54,7 @@ namespace MVC.Repositories
             return route;
         }
 
-        public async Task<Loop> DeleteRoute(int id)
+        public async Task<Route> DeleteRoute(int id)
         {
             var foundRoute = await _context.Routes.FindAsync(id);
             if (foundRoute == null)

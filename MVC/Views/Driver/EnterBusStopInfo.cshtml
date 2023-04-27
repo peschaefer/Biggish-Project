@@ -1,0 +1,31 @@
+﻿@model Entry
+@{
+    ViewData["Title"] = "Enter Bus Stop Information";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-controller="Driver" asp-action="ProcessEntry" method="post">
+    <input type="hidden" asp-for="Bus.Id" />
+    <input type="hidden" asp-for="Loop.Id" />
+
+    <div>
+        <label asp-for="Stop.Id">Stop</label>
+        <input asp-for="Stop.Id" />
+    </div>
+
+    <div>
+        <label asp-for="Boarded">People On Board</label>
+        <input asp-for="Boarded" />
+    </div>
+
+    <div>
+        <label asp-for="LeftBehind">People Left Behind</label>
+        <input asp-for="LeftBehind" />
+    </div>
+
+    <div>
+        <input type="submit" value="Submit Entry" />
+    </div>
+</form>
+

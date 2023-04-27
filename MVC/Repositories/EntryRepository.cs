@@ -6,6 +6,8 @@ namespace MVC.Repositories
 {
     public interface IEntryRepository
     {
+        Task AddEntryAsync(Entry entry);
+        Task SaveChangesAsync();
         Task<List<Entry>> GetEntries();
         Task<Entry> GetEntry(int id);
         Task<int> AddEntry(Entry entry);
@@ -63,6 +65,16 @@ namespace MVC.Repositories
             _context.Entries.Remove(foundEntry);
             await _context.SaveChangesAsync();
             return foundEntry;
+        }
+        public async Task AddEntryAsync(Entry entry)
+        {
+            _context.Entries.Add(entry);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

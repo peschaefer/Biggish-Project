@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MVC.Repositories;
+using MVC.Models;
 
 namespace MVC.Controllers;
 
-public class DriverController: Controller
+public class DriverController : Controller
 {
     private readonly ILoopRepository _loopRepository;
     private readonly IBusRepository _busRepository;
     private readonly IEntryRepository _entryRepository;
-    
+
     public DriverController(ILoopRepository loopRepository, IBusRepository busRepository, IEntryRepository entryRepository)
     {
         _loopRepository = loopRepository;
@@ -25,13 +26,21 @@ public class DriverController: Controller
 
         return View();
     }
-    
+
     [HttpPost]
     public IActionResult StartDriving(int BusId, int LoopId)
     {
-        //temp
-        return RedirectToAction("SelectBusLoop");
+        return RedirectToAction("EnterBusStopInfo", new { BusId = BusId, LoopId = LoopId });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> ProcessEntry(Entry entry)
+    {
+        entry.Timestamp = DateTime.UtcNow;
 
+        await _entryRepository.AddEntryAsync(entry);
+        await _entryRepository.SaveChangesAsync();
+
+        return RedirectToAction("SelectBusLoop");
+    }
 }
