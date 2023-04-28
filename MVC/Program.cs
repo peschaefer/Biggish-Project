@@ -17,6 +17,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IBusRepository, BusRepository>();
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();
 builder.Services.AddScoped<ILoopRepository, LoopRepository>();
+builder.Services.AddScoped<IRouteRepository, RouteRepository>();
+builder.Services.AddScoped<IStopRepository, StopRepository>();
+builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 
 
 var app = builder.Build();
