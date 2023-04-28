@@ -1,4 +1,4 @@
-@model MVC.Models.Loop
+@model MVC.ViewModels.CreateLoopViewModel
 
 @{
     <link rel="stylesheet" href="~/css/loop_index.css" />
@@ -14,22 +14,83 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="createLoopForm">
+                <form id="createLoopForm" asp-controller="Loop" asp-action="Create" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div id="loop-name-input" class="form-group">
-                        <label asp-for="Name" class="control-label">Loop name: </label>
-                        <input type="text" placeholder="Enter loop name..." asp-for="Name" name="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <label asp-for="Loop.Name" class="control-label">Loop name: </label>
+                        <input type="text" placeholder="Enter loop name..." asp-for="Loop.Name" name="Loop.Name" class="form-control" />
+                        <span asp-validation-for="Loop.Name" class="text-danger"></span>
                     </div>
+                    
+                    <div id="routes-container">
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary" id="add-route-button" onclick="addRoute()">Add Route</button>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                @* TODO: Add create loop functionality with routes included. 
-                Currently only works if Loop model is changed to not require a list of routes, 
-                for testing purposes. *@
-                <button type="button" class="btn btn-primary" onclick="submitNewLoop()">Create</button>
+                <button type="submit" form="createLoopForm" class="btn btn-primary">Create</button>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function addRoute() {
+                //need to put this somewhere else
+
+            console.log("Adding route...");
+            let routesContainer = document.getElementById("routes-container");
+            let routeIndex = routesContainer.childElementCount;
+
+            // Create new route row
+            let routeRow = document.createElement("div");
+            routeRow.classList.add("route-row");
+
+            // Add stop select dropdown
+            let stopFormGroup = document.createElement("div");
+            stopFormGroup.classList.add("form-group");
+            let stopLabel = document.createElement("label");
+            stopLabel.textContent = "Select Stop:";
+            let stopSelect = document.createElement("select");
+            stopSelect.name = `Routes[${routeIndex}].SelectedStopId`;
+            stopSelect.classList.add("form-control");
+            let defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Select a stop...";
+            stopSelect.appendChild(defaultOption);
+
+            @foreach (var stop in Model.Stops)
+            {
+                <text>
+                let stopOption = document.createElement("option");
+                stopOption.value = "@stop.Id";
+                stopOption.textContent = "@stop.Name";
+                stopSelect.appendChild(stopOption);
+                </text>
+            }
+
+            stopFormGroup.appendChild(stopLabel);
+            stopFormGroup.appendChild(stopSelect);
+            routeRow.appendChild(stopFormGroup);
+
+            // Add order input
+            let orderFormGroup = document.createElement("div");
+            orderFormGroup.classList.add("form-group");
+            let orderLabel = document.createElement("label");
+            orderLabel.textContent = "Order:";
+            let orderInput = document.createElement("input");
+            orderInput.type = "number";
+            orderInput.name = `Routes[${routeIndex}].Order`;
+            orderInput.classList.add("form-control");
+            orderFormGroup.appendChild(orderLabel);
+            orderFormGroup.appendChild(orderInput);
+            routeRow.appendChild(orderFormGroup);
+
+            // Append route row to the container
+            routesContainer.appendChild(routeRow);
+        }
+    </script>
+}

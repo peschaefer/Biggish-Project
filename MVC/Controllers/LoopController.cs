@@ -3,24 +3,37 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
+using MVC.ViewModels;
 
 namespace MVC.Controllers
 {
     public class LoopController : Controller
     {
         private readonly ILoopRepository _loopRepository;
+        private readonly IStopRepository _stopRepository;
 
-        public LoopController(ILoopRepository loopRepository)
+        public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository)
         {
             _loopRepository = loopRepository;
+            _stopRepository = stopRepository;
         }
+
         [Route("Loop")]
         [Route("Loop/Index")]
         public async Task<IActionResult> Index()
         {
-            return View(await _loopRepository.GetLoops());
+            var viewModel = new LoopIndexViewModel
+            {
+                Loops = await _loopRepository.GetLoops(),
+                CreateLoopViewModel = new CreateLoopViewModel
+                {
+                    Stops = await _stopRepository.GetStops()
+                }
+            };
+
+            return View(viewModel);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Id,Name")] Loop loop)
         {
@@ -32,7 +45,7 @@ namespace MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,Name")] Loop loop)
         {
@@ -57,7 +70,7 @@ namespace MVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int[] ids)
         {

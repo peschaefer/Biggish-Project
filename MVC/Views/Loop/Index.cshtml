@@ -1,4 +1,4 @@
-@model IEnumerable<MVC.Models.Loop>
+@model MVC.ViewModels.LoopIndexViewModel
 
 @{
     ViewData["Title"] = "Loop Index";
@@ -25,7 +25,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var loop in Model)
+            @foreach (var loop in Model.Loops)
             {
                 <tr>
                     <td>
@@ -42,7 +42,7 @@
 </div>
 
 <!-- Create Loop Modal -->
-@await Html.PartialAsync("_CreateLoopModal", new MVC.Models.Loop())
+@await Html.PartialAsync("_CreateLoopModal", Model.CreateLoopViewModel)
 
 <!-- Delete Loop Modal -->
 @await Html.PartialAsync("_DeleteLoopModal")
