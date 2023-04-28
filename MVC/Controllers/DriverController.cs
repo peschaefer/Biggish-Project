@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MVC.Repositories;
+using MVC.ViewModels;
+using MVC.Models;
 
 namespace MVC.Controllers;
 
@@ -27,11 +29,24 @@ public class DriverController: Controller
     }
     
     [HttpPost]
-    public IActionResult StartDriving(int BusId, int LoopId)
+    public async Task<IActionResult> StartDriving(int BusId, int LoopId)
     {
-        //temp
-        return RedirectToAction("SelectBusLoop");
+        Bus selectedBus = await _busRepository.GetBus(BusId);
+        Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
+        return RedirectToAction("EntryCreator", new { BusId = selectedBus.Id, LoopId = selectedLoop.Id });
     }
 
+    public async Task<IActionResult> EntryCreator(int BusId, int LoopId)
+        {
+            Bus selectedBus = await _busRepository.GetBus(BusId);
+            Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
 
+            EntryCreatorViewModel entryCreatorViewModel = new EntryCreatorViewModel
+            {
+                Bus = selectedBus,
+                Loop = selectedLoop
+            };
+
+            return View(entryCreatorViewModel);
+        }
 }
