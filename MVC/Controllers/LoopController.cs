@@ -14,7 +14,8 @@ namespace MVC.Controllers
         {
             _loopRepository = loopRepository;
         }
-
+        [Route("Loop")]
+        [Route("Loop/Index")]
         public async Task<IActionResult> Index()
         {
             return View(await _loopRepository.GetLoops());

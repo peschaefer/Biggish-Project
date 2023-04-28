@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using MVC.Repositories;
 
@@ -6,10 +7,13 @@ using MVC.Repositories;
 // Console.WriteLine($"Database path: {db.DbPath}");
 
 var builder = WebApplication.CreateBuilder(args);
-
+var folder = Environment.SpecialFolder.LocalApplicationData;
+var path = Environment.GetFolderPath(folder);
+var dbPath = Path.Join(path, "BigishProj.db");
 var connectionString = builder.Configuration.GetConnectionString("BigishProj") ?? "Data Source=BigishProj.db";
 
-builder.Services.AddSqlite<BigishProjContext>(connectionString);
+//builder.Services.AddDbContext<BigishProjContext>(options => options.UseSqlite(dbPath));
+builder.Services.AddDbContext<BigishProjContext>(options => options.UseInMemoryDatabase("biggishproject"));
 
 
 // Add services to the container.
@@ -29,6 +33,10 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseDeveloperExceptionPage();
+}
+else
+{
     app.UseHsts();
 }
 
@@ -39,8 +47,6 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapDefaultControllerRoute();
 
 app.Run();

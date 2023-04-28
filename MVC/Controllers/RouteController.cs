@@ -17,14 +17,14 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Route>>> GetAllRoutes()
+        public async Task<ActionResult<List<Models.Route>>> GetAllRoutes()
         {
             var routes = await _routeRepository.GetRoutes();
             return Ok(routes);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Route>> GetRoute(int id)
+        public async Task<ActionResult<Models.Route>> GetRoute(int id)
         {
             var route = await _routeRepository.GetRoute(id);
             if (route == null)
@@ -36,7 +36,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Route>> CreateRoute([FromBody] Route route)
+        public async Task<ActionResult<Models.Route>> CreateRoute([FromBody] Models.Route route)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace MVC.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoute(int id, [FromBody] Route route)
+        public async Task<IActionResult> UpdateRoute(int id, [FromBody] Models.Route route)
         {
             if (id != route.Id)
             {

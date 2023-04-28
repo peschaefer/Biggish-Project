@@ -14,7 +14,8 @@ namespace MVC.Controllers
         {
             _EntryRepository = EntryRepository;
         }
-
+        [Route("Entry")]
+        [Route("Entry/Index")]
         public async Task<IActionResult> Index()
         {
             return View(await _EntryRepository.GetEntries());

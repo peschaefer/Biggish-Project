@@ -14,10 +14,12 @@ namespace MVC.Controllers
         {
             _busRepository = busRepository;
         }
-
+        [Route("Bus")]
+        [Route("Bus/Index")]
         public async Task<IActionResult> Index()
         {
-            return View(await _busRepository.GetBuses());
+            var buses = await _busRepository.GetBuses();
+            return View(buses);
         }
         
         [HttpPost]
@@ -26,10 +28,10 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _busRepository.AddBus(bus);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
 
         }
         
