@@ -1,0 +1,57 @@
+@model IEnumerable<MVC.Models.Loop>
+
+@{
+    ViewData["Title"] = "Loop Index";
+    <link rel="stylesheet" href="~/css/loop_index.css" />
+}
+
+<div>
+    <div id="loop-index-header">
+        <h1>Loop Index</h1>
+        <div id="buttons">
+            <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteLoopModal()">Delete Selected</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createLoopModal">Create Loop</button>
+        </div>
+    </div>
+    <hr id="separator">
+    <table id="loop-table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAllCheckbox">
+                </th>
+                <th>Loop Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loop in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="loopCheckbox" data-loop-id="@loop.Id">
+                    </td>
+                    <td>@loop.Name</td>
+                    <td>
+                        <a onclick="showEditLoopModal(@loop.Id)" class="btn btn-secondary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Loop Modal -->
+@await Html.PartialAsync("_CreateLoopModal", new MVC.Models.Loop())
+
+<!-- Delete Loop Modal -->
+@await Html.PartialAsync("_DeleteLoopModal")
+
+<!-- Edit Loop Modal -->
+@await Html.PartialAsync("_EditLoopModal", new MVC.Models.Loop())
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/loop_actions.js"></script>
+}

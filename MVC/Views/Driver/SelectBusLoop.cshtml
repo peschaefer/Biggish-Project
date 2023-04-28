@@ -2,20 +2,29 @@
     ViewData["Title"] = "Select Bus and Loop";
     SelectList busSelectList = ViewBag.BusId as SelectList;
     SelectList loopSelectList = ViewBag.LoopId as SelectList;
+    <link rel="stylesheet" href="~/css/select_bus_loop.css" />
 }
 
-<h1>Select Bus and Loop</h1>
-
-<form asp-controller="Driver" asp-action="StartDriving" method="post">
-    <div>
-        <label for="BusId">Bus Number</label>
-        <select name="BusId" id="BusId" asp-items="busSelectList"></select>
+<div id="bus-loop-select-container">
+    <div id="bus-loop-select-header">
+        <h1>Select Bus and Loop</h1>
+        <div id="buttons">
+        </div>
     </div>
-    <div>
-        <label for="LoopId">Loop</label>
-        <select name="LoopId" id="LoopId" asp-items="loopSelectList"></select>
+    <hr id="separator">
+    <div id="form-container">
+        <form id="bus-loop-select-form" asp-controller="Driver" asp-action="StartDriving" method="post">
+            <div>
+                <label class="form-label" for="BusId">Bus Number:</label>
+                <select name="BusId" id="BusId" asp-items="busSelectList"></select>
+            </div>
+            <div>
+                <label class="form-label" for="LoopId">Loop:</label>
+                <select name="LoopId" id="LoopId" asp-items="loopSelectList"></select>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-primary" id="bus-loop-select-button" value="Start Driving" />
+            </div>
+        </form>
     </div>
-    <div>
-        <input type="submit" value="Start Driving" />
-    </div>
-</form>
+</div>

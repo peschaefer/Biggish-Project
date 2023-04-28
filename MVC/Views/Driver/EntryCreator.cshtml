@@ -1,0 +1,37 @@
+@model MVC.ViewModels.EntryCreatorViewModel
+
+@{
+    ViewData["Title"] = "Entry Creator";
+    <link rel="stylesheet" href="~/css/entry_creator.css" />
+}
+
+<div id="entry-creator-container">
+    <div id="entry-creator-header">
+        <h1>Entry Creator</h1>
+        <div id="trip-info">
+            <span>Driving on the <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
+            <span>Bus #<strong>@Html.Raw(Model.Bus.BusNumber)</strong>.</span>
+        </div>
+    </div>
+    <hr id="separator">
+    <div id="entry-creator-form-container">
+        <form id="entry-creator-form" asp-controller="Entry" asp-action="Create" method="post">
+            <div id="form-section">
+                @* TODO: Add stopSelectList dropdown *@
+                @* <label class="form-label" for="BusId">Stop:</label>
+                <select name="StopId" id="stop-id" asp-items="busSelectList"></select> *@
+            </div>
+            <div id="form-section">
+                <label class="form-label" for="Entry.Boarded">Passengers boarded:</label>
+                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Boarded" class="form-control" />
+            </div>
+            <div id="form-section">
+                <label class="form-label" for="Entry.LeftBehind">Passengers left behind:</label>
+                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="LeftBehind" class="form-control" />
+            </div>
+            <div>
+                <input type="submit" class="btn btn-primary" id="entry-creator-button" value="Next Stop" />
+            </div>
+        </form>
+    </div>
+</div>
