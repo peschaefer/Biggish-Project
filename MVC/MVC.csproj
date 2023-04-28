@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Views\Stop\_DeleteStopModal.cshtml" />
+  </ItemGroup>
+
 </Project>
