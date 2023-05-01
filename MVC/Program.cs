@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using MVC.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 // using var db = new BigishProjContext();
 //
@@ -14,6 +16,17 @@ var connectionString = builder.Configuration.GetConnectionString("BigishProj") ?
 
 //builder.Services.AddDbContext<BigishProjContext>(options => options.UseSqlite(dbPath));
 builder.Services.AddDbContext<BigishProjContext>(options => options.UseInMemoryDatabase("biggishproject"));
+
+// Add users
+builder.Services.AddDefaultIdentity<Driver>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<BigishProjContext>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ManagerOnly", policy =>
+        policy.RequireClaim("IsManager", "true"));
+});
 
 
 // Add services to the container.

@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MVC.Models;
 
-public class BigishProjContext: DbContext
+public class BigishProjContext: IdentityDbContext<Driver>
 {
     public DbSet<Bus> Buses { get; set; }
     public DbSet<Driver> Drivers { get; set; }

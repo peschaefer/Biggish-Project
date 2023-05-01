@@ -3,16 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
+using MVC.ViewModels;
 
 namespace MVC.Controllers
 {
     public class EntryController : Controller
     {
         private readonly IEntryRepository _EntryRepository;
+        private readonly IStopRepository _stopRepository;
 
-        public EntryController(IEntryRepository EntryRepository)
+        public EntryController(IEntryRepository EntryRepository, IStopRepository stopRepository)
         {
             _EntryRepository = EntryRepository;
+            _stopRepository = stopRepository;
         }
         [Route("Entry")]
         [Route("Entry/Index")]
@@ -22,17 +25,23 @@ namespace MVC.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create(int SelectedStopId, [Bind("Id,Timestamp,Boarded,LeftBehind,Driver,Bus,Loop,Stop")] Entry Entry)
+        public async Task<IActionResult> Create(EntryCreatorViewModel entryCreatorViewModel)
         {
+            Entry entry = entryCreatorViewModel.Entry;
+            entry.Stop = await _stopRepository.GetStop(entryCreatorViewModel.SelectedStopId);
+            // entry.Driver = entryCreatorViewModel.Driver;
+            entry.Bus = entryCreatorViewModel.Bus;
+            entry.Loop = entryCreatorViewModel.Loop;
+            entry.Timestamp = DateTime.Now;
+
             if (ModelState.IsValid)
             {
-                await _EntryRepository.AddEntry(Entry);
-                return RedirectToAction(nameof(Index));
+                await _EntryRepository.AddEntry(entry);
             }
 
-            return RedirectToAction(nameof(Index));
-
+            return RedirectToAction("EntryCreator", "Driver", new { BusId = entry.Bus.Id, LoopId = entry.Loop.Id });
         }
+
         
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,Timestamp,Boarded,LeftBehind,Driver,Bus,Loop,Stop")] Entry Entry)
