@@ -42,6 +42,7 @@ namespace MVC.Repositories
 
         public async Task<int> AddRoute(Models.Route route)
         {
+            Console.WriteLine("Im adding route");
             _context.Routes.Add(route);
             await _context.SaveChangesAsync();
             return route.Id;

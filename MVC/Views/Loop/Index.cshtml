@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Loop Index";
-    <link rel="stylesheet" href="~/css/loop_index.css" />
+    <link rel="stylesheet" href="~/css/loop_index.css"/>
 }
 
 <div>
@@ -16,27 +16,36 @@
     <hr id="separator">
     <table id="loop-table" class="table table-striped">
         <thead>
-            <tr>
-                <th>
-                    <input type="checkbox" id="selectAllCheckbox">
-                </th>
-                <th>Loop Name</th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <th>
+                <input type="checkbox" id="selectAllCheckbox">
+            </th>
+            <th>Loop Name</th>
+            <th>Routes</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var loop in Model.Loops)
-            {
-                <tr>
-                    <td>
-                        <input type="checkbox" name="loopCheckbox" data-loop-id="@loop.Id">
-                    </td>
-                    <td>@loop.Name</td>
-                    <td>
-                        <a onclick="showEditLoopModal(@loop.Id)" class="btn btn-secondary">Edit</a>
-                    </td>
-                </tr>
-            }
+        @foreach (var loop in Model.Loops)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="loopCheckbox" data-loop-id="@loop.Id">
+                </td>
+                <td>@loop.Name</td>
+                <td>
+                    @foreach (var route in loop.Routes.OrderBy(r => r.Order))
+                    {
+                        <div>
+                            @route.Stop.Name (@route.Order)
+                        </div>
+                    }
+                </td>
+                <td>
+                    <a onclick="showEditLoopModal(@loop.Id)" class="btn btn-secondary">Edit</a>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -50,8 +59,68 @@
 <!-- Edit Loop Modal -->
 @await Html.PartialAsync("_EditLoopModal", new MVC.Models.Loop())
 
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script src="~/js/loop_actions.js"></script>
+
+    <script>
+let selectedStops = [];
+
+function addRoute() {
+    let stopsList = @Html.Raw(Json.Serialize(Model.CreateLoopViewModel.Stops));
+
+    // Remove previously selected stops
+    stopsList = stopsList.filter(stop => !selectedStops.includes(stop.id));
+
+    let routesContainer = document.getElementById("routes-container");
+    let routeIndex = routesContainer.childElementCount;
+
+    // Create new route row
+    let routeRow = document.createElement("div");
+    routeRow.classList.add("route-row");
+
+    // Stop dropdown
+    let stopFormGroup = document.createElement("div");
+    stopFormGroup.classList.add("form-group");
+    let stopLabel = document.createElement("label");
+    stopLabel.innerHTML = "Stop:";
+    let stopDropdown = document.createElement("select");
+    stopDropdown.name = `Routes[${routeIndex}].SelectedStopId`;
+    stopDropdown.classList.add("form-control");
+
+    stopsList.forEach(stop => {
+        let option = document.createElement("option");
+        option.value = stop.id;
+        option.textContent = stop.name;
+        stopDropdown.appendChild(option);
+    });
+
+    stopFormGroup.appendChild(stopLabel);
+    stopFormGroup.appendChild(stopDropdown);
+    routeRow.appendChild(stopFormGroup);
+
+    // Order input
+    let orderFormGroup = document.createElement("div");
+    orderFormGroup.classList.add("form-group");
+    let orderLabel = document.createElement("label");
+    orderLabel.innerHTML = "Order:";
+    let orderInput = document.createElement("input");
+    orderInput.type = "number";
+    orderInput.min = "1";
+    orderInput.name = `Routes[${routeIndex}].Order`;
+    orderInput.classList.add("form-control");
+    orderFormGroup.appendChild(orderLabel);
+    orderFormGroup.appendChild(orderInput);
+    routeRow.appendChild(orderFormGroup);
+
+    // Append route row to the container
+    routesContainer.appendChild(routeRow);
+
+    // Add selected stop to array
+    selectedStops.push(parseInt(stopDropdown.value));
+}
+
+
+
+    </script>
 }

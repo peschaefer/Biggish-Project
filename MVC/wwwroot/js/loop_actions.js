@@ -9,6 +9,7 @@ $(document).ready(function () {
 });
 
 function submitNewLoop() {
+    console.log("submitNewLoop")
     var formData = $("#createLoopForm").serialize();
 
     $.ajax({
@@ -78,3 +79,6 @@ function editLoop() {
         },
     });
 }
+
+
+
