@@ -28,9 +28,15 @@ namespace MVC.Repositories
         {
             return await _context.Stops.ToListAsync();
         }
-
+        
         public async Task<Stop> GetStop(int id)
         {
+            Console.WriteLine("ID: " + id);
+            var stops = await _context.Stops.ToListAsync();
+            foreach (var stop in stops)
+            {
+                Console.WriteLine(stop.Id);
+            }
             return await _context.Stops.FindAsync(id);
         }
 

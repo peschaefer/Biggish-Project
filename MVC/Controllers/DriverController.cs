@@ -6,15 +6,17 @@ using MVC.ViewModels;
 using MVC.Models;
 
 namespace MVC.Controllers;
+
 [Authorize]
-public class DriverController: Controller
+public class DriverController : Controller
 {
     private readonly ILoopRepository _loopRepository;
     private readonly IBusRepository _busRepository;
     private readonly IEntryRepository _entryRepository;
     private readonly IRouteRepository _routeRepository;
-    
-    public DriverController(ILoopRepository loopRepository, IBusRepository busRepository, IEntryRepository entryRepository, IRouteRepository routeRepository)
+
+    public DriverController(ILoopRepository loopRepository, IBusRepository busRepository,
+        IEntryRepository entryRepository, IRouteRepository routeRepository)
     {
         _loopRepository = loopRepository;
         _busRepository = busRepository;
@@ -29,7 +31,7 @@ public class DriverController: Controller
 
         return View();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> StartDriving(int BusId, int LoopId)
     {
@@ -39,17 +41,20 @@ public class DriverController: Controller
     }
 
     public async Task<IActionResult> EntryCreator(int BusId, int LoopId)
+    {
+        Bus selectedBus = await _busRepository.GetBus(BusId);
+        Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
+        await _routeRepository.GetRoutes();
+
+        EntryCreatorViewModel entryCreatorViewModel = new EntryCreatorViewModel
         {
-            Bus selectedBus = await _busRepository.GetBus(BusId);
-            Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
-            await _routeRepository.GetRoutes();
+            Bus = selectedBus,
+            Loop = selectedLoop,
+            Entry = new Entry(),
+            BusId = BusId,
+            LoopId = LoopId,
+        };
 
-            EntryCreatorViewModel entryCreatorViewModel = new EntryCreatorViewModel
-            {
-                Bus = selectedBus,
-                Loop = selectedLoop
-            };
-
-            return View(entryCreatorViewModel);
-        }
+        return View(entryCreatorViewModel);
+    }
 }

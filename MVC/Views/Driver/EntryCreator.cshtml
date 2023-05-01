@@ -1,8 +1,9 @@
+@using System.Text.Json
 @model MVC.ViewModels.EntryCreatorViewModel
 
 @{
     ViewData["Title"] = "Entry Creator";
-    <link rel="stylesheet" href="~/css/entry_creator.css" />
+    <link rel="stylesheet" href="~/css/entry_creator.css"/>
 }
 
 <div id="entry-creator-container">
@@ -18,18 +19,23 @@
         <form id="entry-creator-form" asp-controller="Entry" asp-action="Create" method="post">
             <div id="form-section">
                 <label class="form-label" for="StopId">Stop:</label>
-                <select name="StopId" id="stop-id" asp-for="SelectedStopId" asp-items="@(new SelectList(Model.Loop.Routes.OrderBy(r => r.Order).Select(r => r.Stop), "Id", "Name"))"></select>
+                <select id="stop-id" asp-for="SelectedStopId" asp-items="@(new SelectList(Model.Loop.Routes.OrderBy(r => r.Order).Select(r => r.Stop), "Id", "Name"))"></select>
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.Boarded">Passengers boarded:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Boarded" class="form-control" />
+                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Boarded" class="form-control"/>
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.LeftBehind">Passengers left behind:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="LeftBehind" class="form-control" />
+                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="LeftBehind" class="form-control"/>
             </div>
+            <input type="hidden" asp-for="BusId"/>
+            <input type="hidden" asp-for="LoopId"/>
+            <input type="hidden" asp-for="Entry.Bus.Id" value="@Model.Bus.Id"/>
+            <input type="hidden" asp-for="Entry.Loop.Id" value="@Model.Loop.Id"/>
+            <input type="hidden" asp-for="Entry.Stop.Id" value="@Model.SelectedStopId"/>
             <div>
-                <input type="submit" class="btn btn-primary" id="entry-creator-button" value="Next Stop" />
+                <input type="submit" class="btn btn-primary" id="entry-creator-button" value="Next Stop"/>
             </div>
         </form>
     </div>
@@ -37,9 +43,19 @@
 
 @section Scripts {
     <script>
-        document.getElementById("entry-creator-form").addEventListener("submit", function (event) {
-            event.preventDefault();
+document.getElementById("entry-creator-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // prevent the default form submission
 
+    // get the form data
+    const formData = new FormData(event.target);
+
+    // make the POST request
+    fetch(event.target.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
             const stopIdSelect = document.getElementById("stop-id");
             const nextStopIndex = stopIdSelect.selectedIndex + 1;
 
@@ -52,6 +68,14 @@
             // Clear input fields
             document.querySelector("input[name='Boarded']").value = "";
             document.querySelector("input[name='LeftBehind']").value = "";
-        });
+        } else {
+            console.log('Error:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
     </script>
 }
