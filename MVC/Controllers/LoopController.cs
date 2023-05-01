@@ -11,14 +11,14 @@ using Route = MVC.Models.Route;
 namespace MVC.Controllers
 {
     [Authorize]
-
     public class LoopController : Controller
     {
         private readonly ILoopRepository _loopRepository;
         private readonly IStopRepository _stopRepository;
         private readonly IRouteRepository _routeRepository;
 
-        public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository, IRouteRepository routeRepository)
+        public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository,
+            IRouteRepository routeRepository)
         {
             _loopRepository = loopRepository;
             _stopRepository = stopRepository;
@@ -30,8 +30,11 @@ namespace MVC.Controllers
         public async Task<IActionResult> Index()
         {
             var stops = await _stopRepository.GetStops();
-            await _routeRepository.GetRoutes();
-            
+            var routes = await _routeRepository.GetRoutes();
+            foreach (var route in routes)
+            {
+                Console.WriteLine(route.Id);
+            }
             
             var viewModel = new LoopIndexViewModel
             {
@@ -52,7 +55,7 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 Loop loop = new Loop { Name = createLoopViewModel.Loop.Name };
-        
+
                 // Add the routes to the loop
                 foreach (var routeViewModel in createLoopViewModel.Routes)
                 {
@@ -75,31 +78,52 @@ namespace MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,Name")] Loop loop)
+        public async Task<IActionResult> EditConfirmed(int id, [Bind("Loop,Routes")] CreateLoopViewModel viewModel)
         {
-            if (id != loop.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _loopRepository.UpdateLoop(loop);
-                }
-                catch (Exception)
-                {
-                    return NotFound();
-                }
+                    // Get the existing loop
+                    var existingLoop = await _loopRepository.GetLoop(viewModel.Loop.Id);
 
-                return RedirectToAction(nameof(Index));
+                    // Update the loop's name
+                    existingLoop.Name = viewModel.Loop.Name;
+
+                    // Remove the existing routes of the loop
+                    await _routeRepository.RemoveRoutesByLoopId(existingLoop.Id);
+
+                    // Add new routes based on the RouteViewModels
+                    foreach (var routeViewModel in viewModel.Routes)
+                    {
+                        var stop = await _stopRepository.GetStop(routeViewModel.SelectedStopId);
+                        var route = new Route
+                        {
+                            Stop = stop,
+                            Order = routeViewModel.Order,
+                            Loop = existingLoop
+                        };
+                        await _routeRepository.AddRoute(route);
+                    }
+
+                    // Update the loop
+                    await _loopRepository.UpdateLoop(existingLoop);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
 
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int[] ids)

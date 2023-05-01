@@ -13,6 +13,7 @@ namespace MVC.Repositories
         Task<int> AddRoute(Models.Route route);
         Task<Models.Route> UpdateRoute(Models.Route route);
         Task<List<Models.Route>> DeleteRoutes(int[] ids);
+        Task RemoveRoutesByLoopId(int loopId);
     }
 
     public class RouteRepository : IRouteRepository
@@ -86,5 +87,13 @@ namespace MVC.Repositories
             await _context.SaveChangesAsync();
             return routesToDelete;
         }
+        
+        public async Task RemoveRoutesByLoopId(int loopId)
+        {
+            var routesToRemove = _context.Routes.Where(r => r.Loop.Id == loopId);
+            _context.Routes.RemoveRange(routesToRemove);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

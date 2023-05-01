@@ -44,13 +44,9 @@ namespace MVC.Controllers
             Entry entry = entryCreatorViewModel.Entry;
             entry.Stop = await _stopRepository.GetStop(entryCreatorViewModel.SelectedStopId);
             
-            // entry.Driver = await _userManager.GetUserAsync(User);
             
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Console.WriteLine($"userId: {userId}");
-            Console.WriteLine(_userManager);
-            var user = await _userManager.FindByIdAsync(userId);
-            Console.WriteLine($"user: {user}");
+
             entry.Driver = await _userManager.FindByIdAsync(userId);
 
 
@@ -85,7 +81,7 @@ namespace MVC.Controllers
                     }
                 }
             }
-
+            
             return RedirectToAction("EntryCreator", "Driver", new { BusId = entry.Bus.Id, LoopId = entry.Loop.Id });
         }
 
