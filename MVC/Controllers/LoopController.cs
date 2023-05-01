@@ -53,7 +53,6 @@ namespace MVC.Controllers
                 // Add the routes to the loop
                 foreach (var routeViewModel in createLoopViewModel.Routes)
                 {
-                    Console.WriteLine("Adding route");
                     Route route = new Route
                     {
                         Stop = await _stopRepository.GetStop(routeViewModel.SelectedStopId),

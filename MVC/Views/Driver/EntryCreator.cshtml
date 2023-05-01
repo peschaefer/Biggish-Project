@@ -17,9 +17,8 @@
     <div id="entry-creator-form-container">
         <form id="entry-creator-form" asp-controller="Entry" asp-action="Create" method="post">
             <div id="form-section">
-                @* TODO: Add stopSelectList dropdown *@
-                @* <label class="form-label" for="BusId">Stop:</label>
-                <select name="StopId" id="stop-id" asp-items="busSelectList"></select> *@
+                <label class="form-label" for="StopId">Stop:</label>
+                <select name="StopId" id="stop-id" asp-for="SelectedStopId" asp-items="@(new SelectList(Model.Loop.Routes.OrderBy(r => r.Order).Select(r => r.Stop), "Id", "Name"))"></select>
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.Boarded">Passengers boarded:</label>
@@ -35,3 +34,24 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById("entry-creator-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const stopIdSelect = document.getElementById("stop-id");
+            const nextStopIndex = stopIdSelect.selectedIndex + 1;
+
+            if (nextStopIndex < stopIdSelect.options.length) {
+                stopIdSelect.selectedIndex = nextStopIndex;
+            } else {
+                alert("You have reached the end of the loop. Please start a new trip or end the current trip.");
+            }
+
+            // Clear input fields
+            document.querySelector("input[name='Boarded']").value = "";
+            document.querySelector("input[name='LeftBehind']").value = "";
+        });
+    </script>
+}

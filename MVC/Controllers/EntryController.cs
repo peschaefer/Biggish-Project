@@ -22,7 +22,7 @@ namespace MVC.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,Timestamp,Boarded,LeftBehind,Driver,Bus,Loop,Stop")] Entry Entry)
+        public async Task<IActionResult> Create(int SelectedStopId, [Bind("Id,Timestamp,Boarded,LeftBehind,Driver,Bus,Loop,Stop")] Entry Entry)
         {
             if (ModelState.IsValid)
             {

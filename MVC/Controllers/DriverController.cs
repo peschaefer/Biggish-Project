@@ -12,12 +12,14 @@ public class DriverController: Controller
     private readonly ILoopRepository _loopRepository;
     private readonly IBusRepository _busRepository;
     private readonly IEntryRepository _entryRepository;
+    private readonly IRouteRepository _routeRepository;
     
-    public DriverController(ILoopRepository loopRepository, IBusRepository busRepository, IEntryRepository entryRepository)
+    public DriverController(ILoopRepository loopRepository, IBusRepository busRepository, IEntryRepository entryRepository, IRouteRepository routeRepository)
     {
         _loopRepository = loopRepository;
         _busRepository = busRepository;
         _entryRepository = entryRepository;
+        _routeRepository = routeRepository;
     }
 
     public async Task<IActionResult> SelectBusLoop()
@@ -40,6 +42,7 @@ public class DriverController: Controller
         {
             Bus selectedBus = await _busRepository.GetBus(BusId);
             Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
+            await _routeRepository.GetRoutes();
 
             EntryCreatorViewModel entryCreatorViewModel = new EntryCreatorViewModel
             {
