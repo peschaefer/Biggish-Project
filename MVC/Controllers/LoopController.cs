@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
@@ -9,6 +10,8 @@ using Route = MVC.Models.Route;
 
 namespace MVC.Controllers
 {
+    [Authorize]
+
     public class LoopController : Controller
     {
         private readonly ILoopRepository _loopRepository;

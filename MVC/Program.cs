@@ -26,6 +26,8 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ManagerOnly", policy =>
         policy.RequireClaim("IsManager", "true"));
+    options.AddPolicy("ActiveOnly", policy =>
+        policy.RequireClaim("IsActive", "true"));
 });
 
 

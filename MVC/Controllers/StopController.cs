@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
 
 namespace MVC.Controllers
 {
+    [Authorize]
     public class StopController : Controller
     {
         private readonly IStopRepository _stopRepository;

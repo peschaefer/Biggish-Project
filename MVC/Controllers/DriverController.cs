@@ -6,7 +6,7 @@ using MVC.ViewModels;
 using MVC.Models;
 
 namespace MVC.Controllers;
-
+[Authorize]
 public class DriverController: Controller
 {
     private readonly ILoopRepository _loopRepository;
