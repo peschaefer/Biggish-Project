@@ -30,6 +30,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("IsActive", "true"));
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/User/Login";
+});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
