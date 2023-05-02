@@ -11,10 +11,12 @@ namespace MVC.Controllers
     public class BusController : Controller
     {
         private readonly IBusRepository _busRepository;
+        private readonly ILogger<BusController> _logger;
 
-        public BusController(IBusRepository busRepository)
+        public BusController(IBusRepository busRepository, ILogger<BusController> logger)
         {
             _busRepository = busRepository;
+            _logger = logger;
         }
         [Route("Bus")]
         [Route("Bus/Index")]
@@ -30,9 +32,11 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _busRepository.AddBus(bus);
+                _logger.LogInformation("Created new bus with id {id} and bus number {number} at {time}", bus.Id, bus.BusNumber,DateTime.Now);
                 return RedirectToAction("Index");
             }
 
+            _logger.LogError("Failed to create new bus at {time}", DateTime.Now);
             return RedirectToAction("Index");
 
         }
@@ -42,6 +46,7 @@ namespace MVC.Controllers
         {
             if (id != bus.Id)
             {
+                _logger.LogWarning("Bus with id {id} not found at {time}.", bus.Id, DateTime.Now);
                 return NotFound();
             }
 
@@ -50,9 +55,11 @@ namespace MVC.Controllers
                 try
                 {
                     await _busRepository.UpdateBus(bus);
+                    _logger.LogInformation("Edited bus with id {id} at {time}", bus.Id,DateTime.Now);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.LogError("Edit Failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                     return NotFound();
                 }
 
@@ -68,9 +75,11 @@ namespace MVC.Controllers
             try
             {
                 await _busRepository.DeleteBuses(ids);
+                _logger.LogInformation("Deleted busses with ids {ids} at {time}", string.Join(", ", ids.Select(id => id.ToString())),DateTime.Now);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError("Delete Bus failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                 return NotFound();
             }
 
