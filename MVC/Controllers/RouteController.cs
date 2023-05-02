@@ -44,7 +44,7 @@ namespace MVC.Controllers
             try
             {
                 var createdRoute = await _routeRepository.AddRoute(route);
-                _logger.LogWarning("Route with id {id} created at {time}", createdRoute.Id, DateTime.Now);
+                _logger.LogWarning("Route with id {id} created at {time}", route.Id, DateTime.Now);
                 return Ok(createdRoute);
             }
             catch (Exception ex)
