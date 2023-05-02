@@ -8,6 +8,13 @@ namespace MVC.Tests;
 public class EntryRepoTests
 {
 
+    Entry entry1 = new Entry()
+    {
+        Id = 1,
+        Timestamp = DateTime.Now,
+        Boarded = 0,
+        LeftBehind = 0
+    };
 
 
     [Fact]
@@ -21,14 +28,16 @@ public class EntryRepoTests
 
         var context = new BigishProjContext(option);
 
-        BusRepository busRepository = new BusRepository(context);
-        busRepository.AddBus(bus1);
-        var retrievedBus = context.Buses.FindAsync(1);
+        EntryRepository entryRepository = new EntryRepository(context);
+        entryRepository.AddEntry(entry1);
+        var retrievedEntry = context.Entries.FindAsync(1);
 
-        Assert.Equal(bus1.Id, retrievedBus.Result.Id);
-        Assert.Equal(bus1.BusNumber, retrievedBus.Result.BusNumber);
+        Assert.Equal(entry1.Id, retrievedEntry.Result.Id);
+        Assert.Equal(entry1.Timestamp, retrievedEntry.Result.Timestamp);
+        Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
+        Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = busRepository.DeleteBuses(new int[1]);
+        var deletion = entryRepository.DeleteEntry(1);
     }
 
     [Fact]
@@ -42,14 +51,16 @@ public class EntryRepoTests
 
         var context = new BigishProjContext(option);
 
-        BusRepository busRepository = new BusRepository(context);
-        busRepository.AddBus(bus1);
-        var retrievedBus = busRepository.GetBus(1);
+        EntryRepository entryRepository = new EntryRepository(context);
+        entryRepository.AddEntry(entry1);
+        var retrievedEntry = entryRepository.GetEntry(1);
 
-        Assert.Equal(bus1.Id, retrievedBus.Result.Id);
-        Assert.Equal(bus1.BusNumber, retrievedBus.Result.BusNumber);
+        Assert.Equal(entry1.Id, retrievedEntry.Result.Id);
+        Assert.Equal(entry1.Timestamp, retrievedEntry.Result.Timestamp);
+        Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
+        Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = busRepository.DeleteBuses(new int[1]);
+        var deletion = entryRepository.DeleteEntry(1);
     }
 
     [Fact]
@@ -63,24 +74,28 @@ public class EntryRepoTests
 
         var context = new BigishProjContext(option);
 
-        BusRepository busRepository = new BusRepository(context);
+        EntryRepository entryRepository = new EntryRepository(context);
 
-        busRepository.AddBus(bus2);
+        entryRepository.AddEntry(entry1);
 
-        Bus replacement = new Bus()
+        Entry replacement = new Entry()
         {
-            Id = 2,
-            BusNumber = 3
+            Id = 1,
+            Timestamp = entry1.Timestamp,
+            Boarded = 3,
+            LeftBehind = 4
         };
 
-        busRepository.UpdateBus(replacement);
+        entryRepository.UpdateEntry(replacement);
 
-        var retrievedBus = busRepository.GetBus(2);
+        var retrievedEntry = entryRepository.GetEntry(1);
 
-        Assert.Equal(replacement.Id, retrievedBus.Result.Id);
-        Assert.Equal(replacement.BusNumber, retrievedBus.Result.BusNumber);
+        Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
+        Assert.Equal(replacement.Timestamp, retrievedEntry.Result.Timestamp);
+        Assert.Equal(replacement.Boarded, retrievedEntry.Result.Boarded);
+        Assert.Equal(replacement.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = busRepository.DeleteBuses(new int[2]);
+        var deletion = entryRepository.DeleteEntry(1);
     }
 
     [Fact]
