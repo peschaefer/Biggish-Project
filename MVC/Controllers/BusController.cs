@@ -36,7 +36,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            _logger.LogWarning("Failed to create new bus at {time}", DateTime.Now);
+            _logger.LogError("Failed to create new bus at {time}", DateTime.Now);
             return RedirectToAction("Index");
 
         }
@@ -59,7 +59,7 @@ namespace MVC.Controllers
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Edit Failed with exception {exception} at {time}.", e, DateTime.Now);
+                    _logger.LogError("Edit Failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                     return NotFound();
                 }
 
@@ -79,7 +79,7 @@ namespace MVC.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogWarning("Delete Bus failed with exception {exception} at {time}.", e, DateTime.Now);
+                _logger.LogError("Delete Bus failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                 return NotFound();
             }
 
