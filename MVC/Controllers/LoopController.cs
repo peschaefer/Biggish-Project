@@ -30,12 +30,8 @@ namespace MVC.Controllers
         public async Task<IActionResult> Index()
         {
             var stops = await _stopRepository.GetStops();
-            var routes = await _routeRepository.GetRoutes();
-            foreach (var route in routes)
-            {
-                Console.WriteLine(route.Id);
-            }
-            
+            await _routeRepository.GetRoutes();
+
             var viewModel = new LoopIndexViewModel
             {
                 Loops = await _loopRepository.GetLoops(),
@@ -85,13 +81,10 @@ namespace MVC.Controllers
             {
                 try
                 {
-                    // Get the existing loop
                     var existingLoop = await _loopRepository.GetLoop(viewModel.Loop.Id);
 
-                    // Update the loop's name
                     existingLoop.Name = viewModel.Loop.Name;
 
-                    // Remove the existing routes of the loop
                     await _routeRepository.RemoveRoutesByLoopId(existingLoop.Id);
 
                     // Add new routes based on the RouteViewModels

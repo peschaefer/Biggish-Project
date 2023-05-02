@@ -60,9 +60,6 @@ namespace MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                Console.WriteLine("ModelState is valid");
-
-                
                 await _EntryRepository.AddEntry(entry);
             }
             else

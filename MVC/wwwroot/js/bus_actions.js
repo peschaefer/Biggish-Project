@@ -55,6 +55,7 @@ function deleteSelectedBuses() {
 }    
 
 function showEditBusModal(busId) {
+    console.log("BUSiD" + busId)
     document.getElementById('editBusId').value = busId;
     var editBusModal = new bootstrap.Modal(document.getElementById('editBusModal'));
     editBusModal.show();
