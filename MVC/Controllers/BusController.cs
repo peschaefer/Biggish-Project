@@ -79,7 +79,7 @@ namespace MVC.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogWarning("Delete Failed with exception {exception} at {time}.", e, DateTime.Now);
+                _logger.LogWarning("Delete Bus failed with exception {exception} at {time}.", e, DateTime.Now);
                 return NotFound();
             }
 
