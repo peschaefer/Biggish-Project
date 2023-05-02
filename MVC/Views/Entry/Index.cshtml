@@ -13,6 +13,29 @@
         </div>
     </div>
     <hr id="separator">
+    <div id="filters">
+        <div class="filter">
+            <label for="filterAttribute">Filter by:</label>
+            <select id="filterAttribute">
+                <option value="">Select Attribute...</option>
+                <option value="bus">Bus</option>
+                <option value="driver">Driver</option>
+                <option value="loop">Loop</option>
+                <option value="stop">Stop</option>
+            </select>
+        </div>
+        <div class="filter">
+            <label for="sortBy">Sort by:</label>
+            <select id="sortBy">
+                <option value="">Select Sort Option...</option>
+                <option value="timestamp">Timestamp</option>
+                <option value="bus">Bus</option>
+                <option value="driver">Driver</option>
+                <option value="loop">Loop</option>
+                <option value="stop">Stop</option>
+            </select>
+        </div>
+    </div>
     <table id="entry-table" class="table table-striped">
         <thead>
             <tr>

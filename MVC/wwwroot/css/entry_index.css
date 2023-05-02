@@ -18,6 +18,25 @@
     margin-bottom: 20px;
 }
 
+#filters {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 30px;
+}
+
+.filter {
+    margin-right: 30px;
+}
+
+.filter > label {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.filter > select {
+    padding: 5px;
+}
+
 #entry-table {
     vertical-align: middle;
 }
