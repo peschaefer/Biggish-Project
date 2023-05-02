@@ -99,3 +99,21 @@ label {
     height: auto;
 }
   
+#editLoopModalContent {
+    padding: 15px 30px;
+}
+
+#edit-loop-name-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    vertical-align: middle;
+    margin-bottom: 20px;
+}
+
+#edit-loop-name-input > label {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    margin-right: 50px;
+}
