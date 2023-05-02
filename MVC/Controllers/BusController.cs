@@ -1,58 +1,52 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
 
 namespace MVC.Controllers
 {
+    [Authorize(Policy = "ManagerOnly")]
     public class BusController : Controller
     {
         private readonly IBusRepository _busRepository;
+        private readonly ILogger<BusController> _logger;
 
-        public BusController(IBusRepository busRepository)
+        public BusController(IBusRepository busRepository, ILogger<BusController> logger)
         {
             _busRepository = busRepository;
+            _logger = logger;
         }
-
+        [Route("Bus")]
+        [Route("Bus/Index")]
         public async Task<IActionResult> Index()
         {
-            return View(await _busRepository.GetBuses());
+            var buses = await _busRepository.GetBuses();
+            return View(buses);
         }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
+        
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Id,BusNumber")] Bus bus)
         {
             if (ModelState.IsValid)
             {
                 await _busRepository.AddBus(bus);
-                return RedirectToAction(nameof(Index));
+                _logger.LogInformation("Created new bus with id {id} and bus number {number} at {time}", bus.Id, bus.BusNumber,DateTime.Now);
+                return RedirectToAction("Index");
             }
 
-            return View(bus);
+            _logger.LogError("Failed to create new bus at {time}", DateTime.Now);
+            return RedirectToAction("Index");
+
         }
-
-        public async Task<IActionResult> Edit(int id)
-        {
-            var bus = await _busRepository.GetBus(id);
-            if (bus == null)
-            {
-                return NotFound();
-            }
-
-            return View(bus);
-        }
-
+        
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditConfirmed(int id, [Bind("Id,BusNumber")] Bus bus)
         {
             if (id != bus.Id)
             {
+                _logger.LogWarning("Bus with id {id} not found at {time}.", bus.Id, DateTime.Now);
                 return NotFound();
             }
 
@@ -61,38 +55,31 @@ namespace MVC.Controllers
                 try
                 {
                     await _busRepository.UpdateBus(bus);
+                    _logger.LogInformation("Edited bus with id {id} at {time}", bus.Id,DateTime.Now);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.LogError("Edit Failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                     return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(bus);
+            return RedirectToAction(nameof(Index));
         }
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var bus = await _busRepository.GetBus(id);
-            if (bus == null)
-            {
-                return NotFound();
-            }
-
-            return View(bus);
-        }
-
+        
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int[] ids)
         {
             try
             {
                 await _busRepository.DeleteBuses(ids);
+                _logger.LogInformation("Deleted busses with ids {ids} at {time}", string.Join(", ", ids.Select(id => id.ToString())),DateTime.Now);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError("Delete Bus failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                 return NotFound();
             }
 

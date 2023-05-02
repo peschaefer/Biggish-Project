@@ -1,17 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MVC.Models;
-using Route = MVC.Models.Route;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC.Repositories
 {
     public interface IRouteRepository
     {
-
-        Task<List<Route>> GetRoutes();
-        Task<Route> GetRoute(int id);
-        Task<int> AddRoute(Route route);
-        Task<Route> UpdateRoute(Route route);
-        Task<Route> DeleteRoute(int id);
+        Task<List<Models.Route>> GetRoutes();
+        Task<Models.Route> GetRoute(int id);
+        Task<int> AddRoute(Models.Route route);
+        Task<Models.Route> UpdateRoute(Models.Route route);
+        Task<List<Models.Route>> DeleteRoutes(int[] ids);
+        Task RemoveRoutesByLoopId(int loopId);
     }
 
     public class RouteRepository : IRouteRepository
@@ -23,25 +25,31 @@ namespace MVC.Repositories
             _context = context;
         }
 
-        public async Task<List<Route>> GetRoutes()
+        public async Task<List<Models.Route>> GetRoutes()
         {
-            return await _context.Routes.ToListAsync();
-
+            return await _context.Routes
+                .Include(r => r.Stop)
+                .Include(r => r.Loop)
+                .ToListAsync();
         }
 
-        public async Task<Route> GetRoute(int id)
+        public async Task<Models.Route> GetRoute(int id)
         {
-            return await _context.Routes.FindAsync(id);
+            return await _context.Routes
+                .Include(r => r.Stop)
+                .Include(r => r.Loop)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<int> AddRoute(Route route)
+        public async Task<int> AddRoute(Models.Route route)
         {
+            Console.WriteLine("Im adding route");
             _context.Routes.Add(route);
             await _context.SaveChangesAsync();
             return route.Id;
         }
 
-        public async Task<Route> UpateRoute(Route route)
+        public async Task<Models.Route> UpdateRoute(Models.Route route)
         {
             var foundRoute = await _context.Routes.FindAsync(route.Id);
             if (foundRoute == null)
@@ -49,32 +57,43 @@ namespace MVC.Repositories
                 throw new Exception("Route not found");
             }
 
-            _context.Routes.Update(route);
-            await _context.SaveChangesAsync();
-            return route;
-        }
+            // Update the found route with the new properties
+            foundRoute.Order = route.Order;
+            foundRoute.Stop = route.Stop;
+            foundRoute.Loop = route.Loop;
 
-        public async Task<Route> DeleteRoute(int id)
-        {
-            var foundRoute = await _context.Routes.FindAsync(id);
-            if (foundRoute == null)
-            {
-                throw new Exception("Route not found");
-            }
+            // Mark the found route as modified
+            _context.Entry(foundRoute).State = EntityState.Modified;
 
-            _context.Routes.Remove(foundRoute);
             await _context.SaveChangesAsync();
             return foundRoute;
         }
 
-        public Task<Route> UpdateRoute(Route route)
+        public async Task<List<Models.Route>> DeleteRoutes(int[] ids)
         {
-            throw new NotImplementedException();
+            var routesToDelete = new List<Models.Route>();
+
+            foreach (var id in ids)
+            {
+                var foundRoute = await _context.Routes.FindAsync(id);
+                if (foundRoute == null)
+                {
+                    throw new Exception($"Route with ID {id} not found");
+                }
+                routesToDelete.Add(foundRoute);
+            }
+
+            _context.Routes.RemoveRange(routesToDelete);
+            await _context.SaveChangesAsync();
+            return routesToDelete;
+        }
+        
+        public async Task RemoveRoutesByLoopId(int loopId)
+        {
+            var routesToRemove = _context.Routes.Where(r => r.Loop.Id == loopId);
+            _context.Routes.RemoveRange(routesToRemove);
+            await _context.SaveChangesAsync();
         }
 
-        Task<Route> IRouteRepository.DeleteRoute(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

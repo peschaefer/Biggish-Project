@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MVC.Models;
 
-public class BigishProjContext: DbContext
+public class BigishProjContext: IdentityDbContext<Driver>
 {
     public DbSet<Bus> Buses { get; set; }
     public DbSet<Driver> Drivers { get; set; }
@@ -15,13 +16,6 @@ public class BigishProjContext: DbContext
 
     public BigishProjContext(DbContextOptions<BigishProjContext> options) : base(options)
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "BigishProj.db");
-    }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite($"Data Source={DbPath}");
+        
     }
 }

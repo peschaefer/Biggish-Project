@@ -1,0 +1,62 @@
+@model IEnumerable<MVC.Models.Stop>
+
+@{
+    ViewData["Title"] = "Stop Index";
+    <link rel="stylesheet" href="~/css/stop_index.css"/>
+}
+
+<div>
+    <div id="stop-index-header">
+        <h1>Stop Index</h1>
+        <div id="buttons">
+            <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteStopModal()">Delete Selected</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createStopModal">Create Stop</button>
+        </div>
+    </div>
+    <hr id="separator">
+    <table id="stop-table" class="table table-striped">
+        <thead>
+        <tr>
+            <th>
+                <input type="checkbox" id="selectAllCheckbox">
+            </th>
+            <th>Stop Name</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var stop in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="stopCheckbox" data-stop-id="@stop.Id">
+                </td>
+                <td>@stop.Name</td>
+                <td>@stop.Latitude</td>
+                <td>@stop.Longitude</td>
+                <td>
+                    <a onclick="showEditStopModal(@stop.Id)" class="btn btn-secondary">Edit</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Stop Modal -->
+@await Html.PartialAsync("_CreateStopModal", new MVC.Models.Stop())
+
+<!-- Delete Stop Modal -->
+@await Html.PartialAsync("_DeleteStopModal")
+
+<!-- Edit Stop Modal -->
+@await Html.PartialAsync("_EditStopModal", new MVC.Models.Stop())
+
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/js/stop_actions.js"></script>
+}

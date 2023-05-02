@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 
-
 namespace MVC.Repositories
 {
     public interface ILoopRepository
@@ -10,7 +9,7 @@ namespace MVC.Repositories
         Task<Loop> GetLoop(int id);
         Task<int> AddLoop(Loop loop);
         Task<Loop> UpdateLoop(Loop loop);
-        Task<Loop> DeleteLoop(int id);
+        Task<List<Loop>> DeleteLoops(int[] ids);
     }
 
     public class LoopRepository : ILoopRepository
@@ -24,12 +23,12 @@ namespace MVC.Repositories
 
         public async Task<List<Loop>> GetLoops()
         {
-            return await _context.Loops.ToListAsync();
+            return await _context.Loops.Include(l => l.Routes).ThenInclude(r => r.Stop).ToListAsync();
         }
 
         public async Task<Loop> GetLoop(int id)
         {
-            return await _context.Loops.FindAsync(id);
+            return await _context.Loops.Include(l => l.Routes).ThenInclude(r => r.Stop).SingleOrDefaultAsync(l => l.Id == id);
         }
 
         public async Task<int> AddLoop(Loop loop)
@@ -51,18 +50,25 @@ namespace MVC.Repositories
             await _context.SaveChangesAsync();
             return loop;
         }
-
-        public async Task<Loop> DeleteLoop(int id)
+        
+        
+        public async Task<List<Loop>> DeleteLoops(int[] ids)
         {
-            var foundLoop = await _context.Loops.FindAsync(id);
-            if (foundLoop == null)
+            var loopsToDelete = new List<Loop>();
+
+            foreach (var id in ids)
             {
-                throw new Exception("Loop not found");
+                var foundLoop = await _context.Loops.FindAsync(id);
+                if (foundLoop == null)
+                {
+                    throw new Exception($"Bus with ID {id} not found");
+                }
+                loopsToDelete.Add(foundLoop);
             }
 
-            _context.Loops.Remove(foundLoop);
+            _context.Loops.RemoveRange(loopsToDelete);
             await _context.SaveChangesAsync();
-            return foundLoop;
+            return loopsToDelete;
         }
     }
 }

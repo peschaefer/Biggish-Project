@@ -12,7 +12,7 @@ namespace MVC.Repositories
         Task<Entry> GetEntry(int id);
         Task<int> AddEntry(Entry entry);
         Task<Entry> UpdateEntry(Entry entry);
-        Task<Entry> DeleteEntry(int id);
+        Task<List<Entry>> DeleteEntries(int[] ids);
     }
 
     public class EntryRepository : IEntryRepository
@@ -53,18 +53,24 @@ namespace MVC.Repositories
             await _context.SaveChangesAsync();
             return entry;
         }
-
-        public async Task<Entry> DeleteEntry(int id)
+        
+        public async Task<List<Entry>> DeleteEntries(int[] ids)
         {
-            var foundEntry = await _context.Entries.FindAsync(id);
-            if (foundEntry == null)
+            var entriesToDelete = new List<Entry>();
+
+            foreach (var id in ids)
             {
-                throw new Exception("Entry not found");
+                var foundEntry = await _context.Entries.FindAsync(id);
+                if (foundEntry == null)
+                {
+                    throw new Exception($"Bus with ID {id} not found");
+                }
+                entriesToDelete.Add(foundEntry);
             }
 
-            _context.Entries.Remove(foundEntry);
+            _context.Entries.RemoveRange(entriesToDelete);
             await _context.SaveChangesAsync();
-            return foundEntry;
+            return entriesToDelete;
         }
         public async Task AddEntryAsync(Entry entry)
         {

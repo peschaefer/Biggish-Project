@@ -1,0 +1,63 @@
+#stop-index-viewer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#stop-index-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0px 10px 0px;
+    padding-right: 10px;
+}
+
+#separator {
+    border: none;
+    margin-bottom: 20px;
+}
+
+#stop-table {
+    vertical-align: middle;
+}
+
+#stop-table th:first-child,
+#stop-table td:first-child {
+    text-align: left;
+    padding-left: 20px;
+}
+
+#stop-table td:last-child {
+    text-align: right;
+    padding-right: 50px;
+}
+
+#stop-table th:last-child {
+    text-align: right;
+    padding-right: 50px;
+}
+
+#stopModalContent {
+    padding: 15px 30px;
+}
+
+#stop-name-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    vertical-align: middle;
+    margin-bottom: 20px;
+}
+
+#stop-name-input > label {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    margin-right: 50px;
+}
+
+#create-button {
+    display: flex;
+    margin-left: auto;
+}

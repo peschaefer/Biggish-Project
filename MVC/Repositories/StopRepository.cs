@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MVC.Models;
-
 
 namespace MVC.Repositories
 {
@@ -8,9 +10,9 @@ namespace MVC.Repositories
     {
         Task<List<Stop>> GetStops();
         Task<Stop> GetStop(int id);
-        Task<int> AddStop(Stop Stop);
-        Task<Stop> UpdateStop(Stop Stop);
-        Task<Stop> DeleteStop(int id);
+        Task<int> AddStop(Stop stop);
+        Task<Stop> UpdateStop(Stop stop);
+        Task<List<Stop>> DeleteStops(int[] ids);
     }
 
     public class StopRepository : IStopRepository
@@ -26,9 +28,15 @@ namespace MVC.Repositories
         {
             return await _context.Stops.ToListAsync();
         }
-
+        
         public async Task<Stop> GetStop(int id)
         {
+            Console.WriteLine("ID: " + id);
+            var stops = await _context.Stops.ToListAsync();
+            foreach (var stop in stops)
+            {
+                Console.WriteLine(stop.Id);
+            }
             return await _context.Stops.FindAsync(id);
         }
 
@@ -47,22 +55,35 @@ namespace MVC.Repositories
                 throw new Exception("Stop not found");
             }
 
-            _context.Stops.Update(stop);
-            await _context.SaveChangesAsync();
-            return stop;
-        }
+            // Update the found stop with the new properties
+            foundStop.Name = stop.Name;
+            foundStop.Latitude = stop.Latitude;
+            foundStop.Longitude = stop.Longitude;
 
-        public async Task<Stop> DeleteStop(int id)
-        {
-            var foundStop = await _context.Stops.FindAsync(id);
-            if (foundStop == null)
-            {
-                throw new Exception("Stop not found");
-            }
+            // Mark the found stop as modified
+            _context.Entry(foundStop).State = EntityState.Modified;
 
-            _context.Stops.Remove(foundStop);
             await _context.SaveChangesAsync();
             return foundStop;
+        }
+
+        public async Task<List<Stop>> DeleteStops(int[] ids)
+        {
+            var stopsToDelete = new List<Stop>();
+
+            foreach (var id in ids)
+            {
+                var foundStop = await _context.Stops.FindAsync(id);
+                if (foundStop == null)
+                {
+                    throw new Exception($"Stop with ID {id} not found");
+                }
+                stopsToDelete.Add(foundStop);
+            }
+
+            _context.Stops.RemoveRange(stopsToDelete);
+            await _context.SaveChangesAsync();
+            return stopsToDelete;
         }
     }
 }
