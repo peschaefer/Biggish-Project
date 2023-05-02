@@ -40,7 +40,8 @@ namespace MVC.Controllers
                 CreateLoopViewModel = new CreateLoopViewModel
                 {
                     Stops = stops
-                }
+                },
+                MapViewModel = new MapViewModel { Stops = stops }
             };
 
             return View(viewModel);
@@ -138,6 +139,13 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> MapStops()
+        {
+            var stops = await _stopRepository.GetStops();
+            var viewModel = new MapViewModel { Stops = stops };
+            return View(viewModel);
         }
     }
 }

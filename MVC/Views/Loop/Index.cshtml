@@ -48,6 +48,10 @@
         }
         </tbody>
     </table>
+    <!-- Map Partial -->
+    <div id="map-container">
+        @await Html.PartialAsync("_MapPartial", Model.MapViewModel)
+    </div>
 </div>
 
 <!-- Create Loop Modal -->
