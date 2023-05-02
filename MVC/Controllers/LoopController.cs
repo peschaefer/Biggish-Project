@@ -16,13 +16,15 @@ namespace MVC.Controllers
         private readonly ILoopRepository _loopRepository;
         private readonly IStopRepository _stopRepository;
         private readonly IRouteRepository _routeRepository;
+        private readonly ILogger<EntryController> _logger;
 
         public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository,
-            IRouteRepository routeRepository)
+            IRouteRepository routeRepository,ILogger<EntryController> logger)
         {
             _loopRepository = loopRepository;
             _stopRepository = stopRepository;
             _routeRepository = routeRepository;
+            _logger = logger;
         }
 
         [Route("Loop")]
@@ -71,10 +73,12 @@ namespace MVC.Controllers
 
                 await _loopRepository.UpdateLoop(loop);
 
+                _logger.LogInformation("Loop {id} created at {time}", loop.Id, DateTime.Now);
+
                 return RedirectToAction(nameof(Index));
             }
 
-
+            _logger.LogWarning("Failed to create loop at {time}", DateTime.Now);
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,12 +113,13 @@ namespace MVC.Controllers
 
                     // Update the loop
                     await _loopRepository.UpdateLoop(existingLoop);
-
+                     _logger.LogInformation("Updated loop {id} at {time}", existingLoop.Id, DateTime.Now);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    _logger.LogError("Failed to update loop with exception {exception} at {time}", ex,DateTime.Now);
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -131,9 +136,11 @@ namespace MVC.Controllers
             try
             {
                 await _loopRepository.DeleteLoops(ids);
+                _logger.LogInformation("Deleted loops with ids {ids} at {time}", string.Join(", ", ids.Select(id => id.ToString())),DateTime.Now);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError("Delete loop failed with exception {exception} at {time}.", e, DateTime.Now);
                 return NotFound();
             }
 
