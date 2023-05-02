@@ -3,6 +3,7 @@ using MVC.Models;
 using MVC.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MVC.Data;
 
 // using var db = new BigishProjContext();
 //
@@ -68,5 +69,5 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
-
+await DatabaseSeeder.Seed(app.Services);
 app.Run();
