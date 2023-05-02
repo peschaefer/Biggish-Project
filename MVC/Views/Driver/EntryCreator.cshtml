@@ -23,11 +23,11 @@
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.Boarded">Passengers boarded:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" class="form-control"/>
+                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Entry.Boarded" class="form-control"/>
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.LeftBehind">Passengers left behind:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" class="form-control"/>
+                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="Entry.LeftBehind" class="form-control"/>
             </div>
             <input type="hidden" asp-for="BusId"/>
             <input type="hidden" asp-for="LoopId"/>
@@ -67,8 +67,8 @@ document.getElementById("entry-creator-form").addEventListener("submit", functio
             }
 
             // Clear input fields
-            document.querySelector("input[name='Boarded']").value = "";
-            document.querySelector("input[name='LeftBehind']").value = "";
+            document.querySelector("input[name='Entry.Boarded']").value = "";
+            document.querySelector("input[name='Entry.LeftBehind']").value = "";
         } else {
             console.log('Error:', response.statusText);
         }
