@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 
-
 namespace MVC.Repositories
 {
     public interface ILoopRepository
@@ -24,12 +23,12 @@ namespace MVC.Repositories
 
         public async Task<List<Loop>> GetLoops()
         {
-            return await _context.Loops.ToListAsync();
+            return await _context.Loops.Include(l => l.Routes).ThenInclude(r => r.Stop).ToListAsync();
         }
 
         public async Task<Loop> GetLoop(int id)
         {
-            return await _context.Loops.FindAsync(id);
+            return await _context.Loops.Include(l => l.Routes).ThenInclude(r => r.Stop).SingleOrDefaultAsync(l => l.Id == id);
         }
 
         public async Task<int> AddLoop(Loop loop)
