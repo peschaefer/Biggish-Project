@@ -14,21 +14,22 @@ public class DriverController : Controller
     private readonly IBusRepository _busRepository;
     private readonly IEntryRepository _entryRepository;
     private readonly IRouteRepository _routeRepository;
+    private readonly ILogger<DriverController> _logger;
 
     public DriverController(ILoopRepository loopRepository, IBusRepository busRepository,
-        IEntryRepository entryRepository, IRouteRepository routeRepository)
+        IEntryRepository entryRepository, IRouteRepository routeRepository, ILogger<DriverController> logger)
     {
         _loopRepository = loopRepository;
         _busRepository = busRepository;
         _entryRepository = entryRepository;
         _routeRepository = routeRepository;
+        _logger = logger;
     }
 
     public async Task<IActionResult> SelectBusLoop()
     {
         ViewData["BusId"] = new SelectList(await _busRepository.GetBuses(), "Id", "BusNumber");
         ViewData["LoopId"] = new SelectList(await _loopRepository.GetLoops(), "Id", "Name");
-
         return View();
     }
 
@@ -37,6 +38,7 @@ public class DriverController : Controller
     {
         Bus selectedBus = await _busRepository.GetBus(BusId);
         Loop selectedLoop = await _loopRepository.GetLoop(LoopId);
+        _logger.LogInformation("Bus id {id} started driving on loop {loop} at {time}", BusId, selectedLoop.Name ,DateTime.Now);
         return RedirectToAction("EntryCreator", new { BusId = selectedBus.Id, LoopId = selectedLoop.Id });
     }
 
