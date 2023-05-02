@@ -57,6 +57,14 @@
     margin-right: 50px;
 }
 
+#routes-container {
+    margin-bottom: 20px;
+}
+
+.route-row {
+    margin-bottom: 20px;
+}
+
 #create-button {
     display: flex;
     margin-left: auto;
