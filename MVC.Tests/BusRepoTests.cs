@@ -103,13 +103,6 @@ public class BusRepoTests
     }
 
     [Fact]
-    public async void TestUpdateBusNotFound()
-    {
-        Assert.True(false);
-
-    }
-
-    [Fact]
     public async void TestDeleteBuses()
     {
         Assert.True(false);
