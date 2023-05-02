@@ -16,10 +16,10 @@ namespace MVC.Controllers
         private readonly ILoopRepository _loopRepository;
         private readonly IStopRepository _stopRepository;
         private readonly IRouteRepository _routeRepository;
-        private readonly ILogger<EntryController> _logger;
+        private readonly ILogger<LoopController> _logger;
 
         public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository,
-            IRouteRepository routeRepository,ILogger<EntryController> logger)
+            IRouteRepository routeRepository,ILogger<LoopController> logger)
         {
             _loopRepository = loopRepository;
             _stopRepository = stopRepository;
