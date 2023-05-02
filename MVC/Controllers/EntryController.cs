@@ -62,6 +62,7 @@ namespace MVC.Controllers
 
             if (ModelState.IsValid)
             {
+                Console.WriteLine("ModelState is valid");
                 _logger.LogInformation("Entry {id} created by {driver} on bus {bus} for stop {stop} at {time}",
                  entry.Id, entry.Driver.FirstName + " " + entry.Driver.LastName, entry.Bus.BusNumber, entry.Stop.Id, DateTime.Now);
                 await _EntryRepository.AddEntry(entry);
