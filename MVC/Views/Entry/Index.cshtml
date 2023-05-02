@@ -1,0 +1,68 @@
+@model IEnumerable<MVC.Models.Entry>
+
+@{
+    ViewData["Title"] = "Entry Index";
+    <link rel="stylesheet" href="~/css/entry_index.css" />
+}
+
+<div>
+    <div id="entry-index-header">
+        <h1>Entry Index</h1>
+        <div id="buttons">
+            <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteEntryModal()">Delete Selected</button>
+        </div>
+    </div>
+    <hr id="separator">
+    <table id="entry-table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAllCheckbox">
+                </th>
+                <th>Bus</th>
+                <th>Driver</th>
+                <th>Boarded</th>
+                <th>Left Behind</th>
+                <th>Loop</th>
+                <th>Stop</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="entryCheckbox" data-entry-id="@entry.Id">
+                    </td>
+                    <td>@entry.Bus.BusNumber</td>
+                    <td>@entry.Driver</td>
+                    <td>@entry.Boarded</td>
+                    <td>@entry.LeftBehind</td>
+                    <td>@entry.Loop</td>
+                    <td>@entry.Stop</td>
+                    <td>@entry.Timestamp</td>
+                    <td>
+                        <a onclick="showEditEntryModal(@entry.Id)" class="btn btn-secondary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* <!-- Create Entry Modal -->
+@await Html.PartialAsync("_CreateEntryModal", new MVC.Models.Entry())
+
+<!-- Delete Entry Modal -->
+@await Html.PartialAsync("_DeleteEntryModal")
+
+<!-- Edit Entry Modal -->
+@await Html.PartialAsync("_EditEntryModal", new MVC.Models.Entry()) *@
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/entry_actions.js"></script>
+}
