@@ -21,10 +21,10 @@
                 </th>
                 <th>Bus</th>
                 <th>Driver</th>
-                <th>Boarded</th>
-                <th>Left Behind</th>
                 <th>Loop</th>
                 <th>Stop</th>
+                <th>Boarded</th>
+                <th>Left Behind</th>
                 <th>Timestamp</th>
                 <th>Actions</th>
             </tr>
@@ -37,11 +37,11 @@
                         <input type="checkbox" name="entryCheckbox" data-entry-id="@entry.Id">
                     </td>
                     <td>@entry.Bus.BusNumber</td>
-                    <td>@entry.Driver</td>
+                    <td>@entry.Driver.FirstName @entry.Driver.LastName</td>
+                    <td>@entry.Loop.Name</td>
+                    <td>@entry.Stop.Name</td>
                     <td>@entry.Boarded</td>
                     <td>@entry.LeftBehind</td>
-                    <td>@entry.Loop</td>
-                    <td>@entry.Stop</td>
                     <td>@entry.Timestamp</td>
                     <td>
                         <a onclick="showEditEntryModal(@entry.Id)" class="btn btn-secondary">Edit</a>
