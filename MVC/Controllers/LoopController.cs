@@ -32,7 +32,6 @@ namespace MVC.Controllers
         public async Task<IActionResult> Index()
         {
             var stops = await _stopRepository.GetStops();
-            await _routeRepository.GetRoutes();
             var loops = await _loopRepository.GetLoops();
 
             var loopStops = new Dictionary<int, List<Stop>>();
