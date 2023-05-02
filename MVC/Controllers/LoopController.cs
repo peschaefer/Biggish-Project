@@ -33,14 +33,23 @@ namespace MVC.Controllers
         {
             var stops = await _stopRepository.GetStops();
             await _routeRepository.GetRoutes();
+            var loops = await _loopRepository.GetLoops();
 
+            var loopStops = new Dictionary<int, List<Stop>>();
+            foreach (var loop in loops)
+            {
+                loopStops.Add(loop.Id, loop.Routes.Select(r => r.Stop).ToList());
+            }
+            
             var viewModel = new LoopIndexViewModel
             {
                 Loops = await _loopRepository.GetLoops(),
                 CreateLoopViewModel = new CreateLoopViewModel
                 {
                     Stops = stops
-                }
+                },
+                MapViewModel = new MapViewModel { Stops = stops },
+                LoopStops = loopStops
             };
 
             return View(viewModel);
@@ -138,6 +147,13 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> MapStops()
+        {
+            var stops = await _stopRepository.GetStops();
+            var viewModel = new MapViewModel { Stops = stops };
+            return View(viewModel);
         }
     }
 }
