@@ -32,7 +32,7 @@ public class RouteRepoTests
         Assert.Equal(route1.Id, retrievedEntry.Result.Id);
         Assert.Equal(route1.Order, retrievedEntry.Result.Order);
 
-        var deletion = routeRepository.DeleteRoute(1);
+        var deletion = routeRepository.DeleteRoutes(new int[1]);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class RouteRepoTests
         Assert.Equal(route1.Id, retrievedEntry.Result.Id);
         Assert.Equal(route1.Order, retrievedEntry.Result.Order);
 
-        var deletion = routeRepository.DeleteRoute(1);
+        var deletion = routeRepository.DeleteRoutes(new int[1]);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class RouteRepoTests
         Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
         Assert.Equal(replacement.Order, retrievedEntry.Result.Order);
 
-        var deletion = routeRepository.DeleteRoute(1);
+        var deletion = routeRepository.DeleteRoutes(new int[1]);
     }
 
     [Fact]

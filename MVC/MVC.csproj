@@ -20,7 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Views\Home\Privacy.cshtml" />
     <AdditionalFiles Include="Views\Stop\_DeleteStopModal.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Home\Privacy.cshtml" />
   </ItemGroup>
 
 </Project>

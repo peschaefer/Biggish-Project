@@ -1,110 +1,83 @@
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using MVC.Repositories;
-using Moq;
-using System.Reflection.Metadata;
-using Castle.Components.DictionaryAdapter.Xml;
-using MVC.Controllers;
-using Microsoft.AspNetCore.Connections;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Microsoft.Data.Sqlite;
 
 namespace MVC.Tests;
 
 public class BusRepoTests
 {
-    Bus bus1 = new Bus()
+    private BigishProjContext GetDbContext()
     {
-        BusNumber = 1,
-        Id = 1
-    };
-
-    Bus bus2 = new Bus()
-    {
-        BusNumber = 2,
-        Id = 2
-    };
-
-    [Fact]
-    public async void TestAddBus()
-    {
-        var connection = new SqliteConnection("DataSource=:memory:");
-
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
+        var options = new DbContextOptionsBuilder<BigishProjContext>()
+            .UseInMemoryDatabase(databaseName: $"TestDb{Guid.NewGuid()}")
             .Options;
 
-        var context = new BigishProjContext(option);
+        return new BigishProjContext(options);
+    }
+    
+    [Fact]
+    public async Task TestAddAndGetBus()
+    {
+        // add and get are so closely related it makes sense to test them together
+        var dbContext = GetDbContext();
+        var repository = new BusRepository(dbContext);
+        var newBus = new Bus { BusNumber = 123 };
 
-        BusRepository busRepository = new BusRepository(context);
+        var busId = await repository.AddBus(newBus);
+        var addedBus = await repository.GetBus(busId);
 
-        busRepository.AddBus(bus1);
-
-        var retrievedBus = context.Buses.FindAsync(1);
-
-        Assert.Equal(bus1.Id, retrievedBus.Result.Id);
-        Assert.Equal(bus1.BusNumber, retrievedBus.Result.BusNumber);
-
-        var deletion = busRepository.DeleteBuses(new int[1]);
+        Assert.NotNull(addedBus);
+        Assert.Equal(123, addedBus.BusNumber);
     }
 
     [Fact]
-    public async void TestGetBus()
+    public async Task TestGetBuses()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new BusRepository(dbContext);
+        var bus1 = new Bus { BusNumber = 123 };
+        var bus2 = new Bus { BusNumber = 456 };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        await repository.AddBus(bus1);
+        await repository.AddBus(bus2);
 
-        var context = new BigishProjContext(option);
+        var buses = await repository.GetBuses();
 
-        BusRepository busRepository = new BusRepository(context);
-
-        busRepository.AddBus(bus1);
-
-        var retrievedBus = busRepository.GetBus(1);
-
-        Assert.Equal(bus1.Id, retrievedBus.Result.Id);
-        Assert.Equal(bus1.BusNumber, retrievedBus.Result.BusNumber);
-
-        var deletion = busRepository.DeleteBuses(new int[1]);
+        Assert.NotNull(buses);
+        Assert.Equal(2, buses.Count);
+        Assert.Contains(buses, bus => bus.BusNumber == 123);
+        Assert.Contains(buses, bus => bus.BusNumber == 456);
     }
 
     [Fact]
-    public async void TestUpdateBus()
+    public async Task TestUpdateBus()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new BusRepository(dbContext);
+        var newBus = new Bus { BusNumber = 123 };
+        var busId = await repository.AddBus(newBus);
+        newBus.Id = busId;
+        newBus.BusNumber = 456;
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        var updatedBus = await repository.UpdateBus(newBus);
 
-        var context = new BigishProjContext(option);
-
-        BusRepository busRepository = new BusRepository(context);
-
-        busRepository.AddBus(bus2);
-
-        Bus replacement = new Bus()
-        {
-            Id = 2,
-            BusNumber = 3
-        };
-
-        busRepository.UpdateBus(replacement);
-
-        var retrievedBus = busRepository.GetBus(2);
-
-        Assert.Equal(replacement.Id, retrievedBus.Result.Id);
-        Assert.Equal(replacement.BusNumber, retrievedBus.Result.BusNumber);
-
-        var deletion = busRepository.DeleteBuses(new int[2]);
+        Assert.NotNull(updatedBus);
+        Assert.Equal(456, updatedBus.BusNumber);
     }
-
+    
     [Fact]
     public async void TestDeleteBuses()
     {
-        Assert.True(false);
+        var dbContext = GetDbContext();
+        var repository = new BusRepository(dbContext);
+        var bus1 = new Bus { BusNumber = 123 };
+        var bus2 = new Bus { BusNumber = 456 };
+        var bus1Id = await repository.AddBus(bus1);
+        var bus2Id = await repository.AddBus(bus2);
+
+        await repository.DeleteBuses(new int[] { bus1Id, bus2Id });
+        var remainingBuses = await repository.GetBuses();
+
+        Assert.Empty(remainingBuses);
     }
 }

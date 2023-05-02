@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using MVC.Repositories;
 
@@ -7,89 +6,77 @@ namespace MVC.Tests;
 
 public class LoopRepoTests
 {
-    Loop loop1 = new Loop()
+    private BigishProjContext GetDbContext()
     {
-        Id = 1,
-        Name = "Test"
-    };
-
-
-    [Fact]
-    public async void TestAddLoop()
-    {
-        var connection = new SqliteConnection("DataSource=:memory:");
-
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
+        var options = new DbContextOptionsBuilder<BigishProjContext>()
+            .UseInMemoryDatabase(databaseName: $"TestDb-{Guid.NewGuid()}")
             .Options;
 
-        var context = new BigishProjContext(option);
-
-        LoopRepository loopRepository = new LoopRepository(context);
-        loopRepository.AddLoop(loop1);
-        var retrievedEntry = context.Loops.FindAsync(1);
-
-        Assert.Equal(loop1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(loop1.Name, retrievedEntry.Result.Name);
-
-        var deletion = loopRepository.DeleteLoop(1);
+        return new BigishProjContext(options);
     }
 
     [Fact]
-    public async void TestGetLoop()
+    public async Task TestAddAndGetLoop()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new LoopRepository(dbContext);
+        var newLoop = new Loop { Name = "Test Loop" };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        var loopId = await repository.AddLoop(newLoop);
+        var addedLoop = await repository.GetLoop(loopId);
 
-        var context = new BigishProjContext(option);
-
-        LoopRepository loopRepository = new LoopRepository(context);
-        loopRepository.AddLoop(loop1);
-        var retrievedEntry = loopRepository.GetLoop(1);
-
-        Assert.Equal(loop1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(loop1.Name, retrievedEntry.Result.Name);
-
-        var deletion = loopRepository.DeleteLoop(1);
+        Assert.NotNull(addedLoop);
+        Assert.Equal("Test Loop", addedLoop.Name);
     }
 
     [Fact]
-    public async void TestUpdateLoop()
+    public async Task TestGetLoops()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new LoopRepository(dbContext);
+        var loop1 = new Loop { Name = "Loop 1" };
+        var loop2 = new Loop { Name = "Loop 2" };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        await repository.AddLoop(loop1);
+        await repository.AddLoop(loop2);
 
-        var context = new BigishProjContext(option);
+        var loops = await repository.GetLoops();
 
-        LoopRepository loopRepository = new LoopRepository(context);
-
-        loopRepository.AddLoop(loop1);
-
-        Loop replacement = new Loop()
-        {
-            Id = 1,
-            Name = "New Name"
-        };
-
-        loopRepository.UpdateLoop(replacement);
-
-        var retrievedEntry = loopRepository.GetLoop(1);
-
-        Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
-        Assert.Equal(replacement.Name, retrievedEntry.Result.Name);
-
-        var deletion = loopRepository.DeleteLoop(1);
+        Assert.NotNull(loops);
+        Assert.Equal(2, loops.Count);
+        Assert.Contains(loops, loop => loop.Name == "Loop 1");
+        Assert.Contains(loops, loop => loop.Name == "Loop 2");
     }
 
     [Fact]
-    public async void TestDeleteEntry()
+    public async Task TestUpdateLoop()
     {
-        Assert.True(false);
+        var dbContext = GetDbContext();
+        var repository = new LoopRepository(dbContext);
+        var newLoop = new Loop { Name = "Test Loop" };
+        var loopId = await repository.AddLoop(newLoop);
+        newLoop.Id = loopId;
+        newLoop.Name = "Updated Loop";
+
+        var updatedLoop = await repository.UpdateLoop(newLoop);
+
+        Assert.NotNull(updatedLoop);
+        Assert.Equal("Updated Loop", updatedLoop.Name);
+    }
+
+    [Fact]
+    public async Task TestDeleteLoops()
+    {
+        var dbContext = GetDbContext();
+        var repository = new LoopRepository(dbContext);
+        var loop1 = new Loop { Name = "Loop 1" };
+        var loop2 = new Loop { Name = "Loop 2" };
+        var loop1Id = await repository.AddLoop(loop1);
+        var loop2Id = await repository.AddLoop(loop2);
+
+        await repository.DeleteLoops(new int[] { loop1Id, loop2Id });
+        var remainingLoops = await repository.GetLoops();
+
+        Assert.Empty(remainingLoops);
     }
 }

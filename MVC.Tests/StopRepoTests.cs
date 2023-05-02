@@ -36,7 +36,7 @@ public class StopRepoTests
         Assert.Equal(stop1.Latitude, retrievedEntry.Result.Latitude);
         Assert.Equal(stop1.Longitude, retrievedEntry.Result.Longitude);
 
-        var deletion = stopRepository.DeleteStop(1);
+        var deletion = stopRepository.DeleteStops(new int[1]);
     }
 
     [Fact]
@@ -58,8 +58,9 @@ public class StopRepoTests
         Assert.Equal(stop1.Name, retrievedEntry.Result.Name);
         Assert.Equal(stop1.Latitude, retrievedEntry.Result.Latitude);
         Assert.Equal(stop1.Longitude, retrievedEntry.Result.Longitude);
+        
 
-        var deletion = stopRepository.DeleteStop(1);
+        var deletion = stopRepository.DeleteStops(new int[1]);
     }
 
     [Fact]
@@ -94,7 +95,7 @@ public class StopRepoTests
         Assert.Equal(replacement.Latitude, retrievedEntry.Result.Latitude);
         Assert.Equal(replacement.Longitude, retrievedEntry.Result.Longitude);
 
-        var deletion = stopRepository.DeleteStop(1);
+        var deletion = stopRepository.DeleteStops(new int[1]);
     }
 
     [Fact]

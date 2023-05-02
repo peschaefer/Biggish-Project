@@ -37,7 +37,7 @@ public class EntryRepoTests
         Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
         Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = entryRepository.DeleteEntry(1);
+        var deletion = entryRepository.DeleteEntries(new int[1]);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class EntryRepoTests
         Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
         Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = entryRepository.DeleteEntry(1);
+        var deletion = entryRepository.DeleteEntries(new int[1]);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class EntryRepoTests
         Assert.Equal(replacement.Boarded, retrievedEntry.Result.Boarded);
         Assert.Equal(replacement.LeftBehind, retrievedEntry.Result.LeftBehind);
 
-        var deletion = entryRepository.DeleteEntry(1);
+        var deletion = entryRepository.DeleteEntries(new int[1]);
     }
 
     [Fact]
