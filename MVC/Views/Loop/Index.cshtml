@@ -48,6 +48,23 @@
         }
         </tbody>
     </table>
+    <hr id="separator">
+    <div id="loop-index-header">
+        <h2>Map</h2>
+        <div id="map-filter-container">
+            <div id="loop-select-menu">
+                <label for="loopSelect" style="margin-right: 15px;">Filter by loop:</label>
+                <select id="loopSelect">
+                    <option value="">All stops</option>
+                    @foreach (var loop in Model.Loops)
+                    {
+                        <option value="@loop.Id">@loop.Name</option>
+                    }
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="filterMapStops()">Filter stops</button>
+        </div>
+    </div>
     <!-- Map Partial -->
     <div id="map-container">
         @await Html.PartialAsync("_MapPartial", Model.MapViewModel)
@@ -66,6 +83,7 @@
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script src="~/js/loop_actions.js"></script>
+    <script src="~/js/map.js"></script>
 
     <script>
 
@@ -146,6 +164,21 @@
             });
 
             $('#editLoopModal').modal('show');
+        }
+    </script>
+    <script>
+        function filterMapStops() {
+            let loopSelect = document.getElementById("loopSelect");
+            let selectedLoopId = parseInt(loopSelect.value);
+
+            let loopStopsData = @Html.Raw(Json.Serialize(Model.LoopStops));
+
+            if (selectedLoopId) {
+                let filteredStops = loopStopsData[selectedLoopId.toString()];
+                updateMapMarkers(filteredStops);
+            } else {
+                updateMapMarkers(window.stopsData);
+            }
         }
     </script>
 }

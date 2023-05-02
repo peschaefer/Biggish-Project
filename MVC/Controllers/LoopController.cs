@@ -33,7 +33,14 @@ namespace MVC.Controllers
         {
             var stops = await _stopRepository.GetStops();
             await _routeRepository.GetRoutes();
+            var loops = await _loopRepository.GetLoops();
 
+            var loopStops = new Dictionary<int, List<Stop>>();
+            foreach (var loop in loops)
+            {
+                loopStops.Add(loop.Id, loop.Routes.Select(r => r.Stop).ToList());
+            }
+            
             var viewModel = new LoopIndexViewModel
             {
                 Loops = await _loopRepository.GetLoops(),
@@ -41,7 +48,8 @@ namespace MVC.Controllers
                 {
                     Stops = stops
                 },
-                MapViewModel = new MapViewModel { Stops = stops }
+                MapViewModel = new MapViewModel { Stops = stops },
+                LoopStops = loopStops
             };
 
             return View(viewModel);
