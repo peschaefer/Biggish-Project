@@ -74,7 +74,7 @@ namespace MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            _logger.LogWarning("Failed to create loop at {time}", DateTime.Now);
+            _logger.LogError("Failed to create loop at {time}", DateTime.Now);
             return RedirectToAction(nameof(Index));
         }
 
@@ -112,7 +112,7 @@ namespace MVC.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    _logger.LogError("Failed to update loop with exception {exception} at {time}", ex,DateTime.Now);
+                    _logger.LogError("Failed to update loop with exception {exception} at {time}", ex.Message, DateTime.Now);
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -133,7 +133,7 @@ namespace MVC.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Delete loop failed with exception {exception} at {time}.", e, DateTime.Now);
+                _logger.LogError("Delete loop failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                 return NotFound();
             }
 

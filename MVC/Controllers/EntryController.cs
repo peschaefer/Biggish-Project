@@ -81,7 +81,7 @@ namespace MVC.Controllers
                         }
                     }
                 }
-                _logger.LogWarning("Failed to create entry at {time}", entry.Id, DateTime.Now);
+                _logger.LogError("Failed to create entry at {time}", DateTime.Now);
             }
             
             return RedirectToAction("EntryCreator", "Driver", new { BusId = entry.Bus.Id, LoopId = entry.Loop.Id });
@@ -104,9 +104,9 @@ namespace MVC.Controllers
                     await _EntryRepository.UpdateEntry(Entry);
                     _logger.LogInformation("Updated entry {id} at {time}.", id, DateTime.Now);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    _logger.LogWarning("Entry {id} not found at {time}.", id, DateTime.Now);
+                    _logger.LogWarning("Failed to update entry with exception {exception} at {time}.", e.Message, DateTime.Now);
                     return NotFound();
                 }
 
@@ -126,7 +126,7 @@ namespace MVC.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogWarning("Delete Bus Failed with exception {exception} at {time}.", e, DateTime.Now);
+                _logger.LogWarning("Delete Bus Failed with exception {exception} at {time}.", e.Message, DateTime.Now);
                 return NotFound();
             }
 
