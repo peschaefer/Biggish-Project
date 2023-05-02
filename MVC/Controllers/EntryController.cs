@@ -19,14 +19,16 @@ namespace MVC.Controllers
         private readonly IBusRepository _busRepository;
         private readonly ILoopRepository _loopRepository;
         private readonly UserManager<Driver> _userManager;
+        private readonly ILogger<EntryController> _logger;
 
-        public EntryController(IEntryRepository EntryRepository, IStopRepository stopRepository, UserManager<Driver> userManager, IBusRepository busRepository, ILoopRepository loopRepository)
+        public EntryController(IEntryRepository EntryRepository, IStopRepository stopRepository, UserManager<Driver> userManager, IBusRepository busRepository, ILoopRepository loopRepository,ILogger<EntryController> logger)
         {
             _EntryRepository = EntryRepository;
             _stopRepository = stopRepository;
             _userManager = userManager;
             _busRepository = busRepository;
             _loopRepository = loopRepository;
+            _logger = logger;
         }
         [Route("Entry")]
         [Route("Entry/Index")]
@@ -61,8 +63,8 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 Console.WriteLine("ModelState is valid");
-
-                
+                _logger.LogInformation("Entry {id} created by {driver} on bus {bus} for stop {stop} at {time}",
+                 entry.Id, entry.Driver.FirstName + " " + entry.Driver.LastName, entry.Bus.BusNumber, entry.Stop.Id, DateTime.Now);
                 await _EntryRepository.AddEntry(entry);
             }
             else
@@ -80,6 +82,7 @@ namespace MVC.Controllers
                         }
                     }
                 }
+                _logger.LogWarning("Failed to create entry at {time}", entry.Id, DateTime.Now);
             }
             
             return RedirectToAction("EntryCreator", "Driver", new { BusId = entry.Bus.Id, LoopId = entry.Loop.Id });
@@ -91,6 +94,7 @@ namespace MVC.Controllers
         {
             if (id != Entry.Id)
             {
+                _logger.LogWarning("Entry with id {id} not found at {time}.", id, DateTime.Now);
                 return NotFound();
             }
 
@@ -99,9 +103,11 @@ namespace MVC.Controllers
                 try
                 {
                     await _EntryRepository.UpdateEntry(Entry);
+                    _logger.LogInformation("Updated entry {id} at {time}.", id, DateTime.Now);
                 }
                 catch (Exception)
                 {
+                    _logger.LogWarning("Entry {id} not found at {time}.", id, DateTime.Now);
                     return NotFound();
                 }
 
@@ -117,9 +123,11 @@ namespace MVC.Controllers
             try
             {
                 await _EntryRepository.DeleteEntries(ids);
+                _logger.LogInformation("Deleted entries with ids {ids} at {time}", string.Join(", ", ids.Select(id => id.ToString())),DateTime.Now);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogWarning("Delete Bus Failed with exception {exception} at {time}.", e, DateTime.Now);
                 return NotFound();
             }
 
