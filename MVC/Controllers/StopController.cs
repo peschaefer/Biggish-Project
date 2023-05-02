@@ -37,7 +37,7 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _stopRepository.AddStop(stop);
-                _logger.LogWarning("Stop with id {id} created at {time}", stop.Id, DateTime.Now);
+                _logger.LogInformation("Stop with id {id} created at {time}", stop.Id, DateTime.Now);
                 return RedirectToAction(nameof(Index));
             }
 
