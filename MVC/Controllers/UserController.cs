@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MVC.Models;
+using MVC.Repositories;
 using MVC.ViewModels;
 
 namespace MVC.Controllers
@@ -12,13 +13,15 @@ namespace MVC.Controllers
     {
         private readonly UserManager<Driver> _userManager;
         private readonly SignInManager<Driver> _signInManager;
+        private readonly IDriverRepository _driverRepository;
         private readonly ILogger<UserController> _logger;
         
-        public UserController(UserManager<Driver> userManager, SignInManager<Driver> signInManager, ILogger<UserController> logger)
+        public UserController(UserManager<Driver> userManager, SignInManager<Driver> signInManager, ILogger<UserController> logger, IDriverRepository driverRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _driverRepository = driverRepository;
         }
 
         public IActionResult Login()
@@ -77,6 +80,7 @@ namespace MVC.Controllers
                     user.IsManager = false;
                     user.IsActive = false;
                 }
+                await _driverRepository.AddDriver(user);
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
