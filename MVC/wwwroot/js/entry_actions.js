@@ -72,7 +72,7 @@ function applyFilterAndSort() {
             .sort((a, b) => {
                 const aVal = a.querySelector(`td[data-attribute="${sortBy}"]`).textContent;
                 const bVal = b.querySelector(`td[data-attribute="${sortBy}"]`).textContent;
-    
+                console.log(new Date(aVal))
                 let compareResult;
                 if (sortBy === "timestamp") {
                     compareResult = new Date(aVal) - new Date(bVal);
