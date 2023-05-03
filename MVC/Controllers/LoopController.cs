@@ -61,22 +61,22 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
                 Loop loop = new Loop { Name = createLoopViewModel.Loop.Name };
-
+                
                 // Add the routes to the loop
+                var routes = new List<Route>();
                 foreach (var routeViewModel in createLoopViewModel.Routes)
                 {
-                    Route route = new Route
+                     Route route = new Route
                     {
                         Stop = await _stopRepository.GetStop(routeViewModel.SelectedStopId),
                         Order = routeViewModel.Order,
                         Loop = loop
                     };
-                    await _routeRepository.AddRoute(route);
-                    loop.Routes.Add(route);
+                     routes.Add(route);
                 }
 
-                await _loopRepository.UpdateLoop(loop);
-
+                await _loopRepository.AddLoopWithRoutes(loop, routes);
+                
                 _logger.LogInformation("Loop {id} created at {time}", loop.Id, DateTime.Now);
 
                 return RedirectToAction(nameof(Index));
