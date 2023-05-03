@@ -10,7 +10,7 @@
     <div id="entry-creator-header">
         <h1>Entry Creator</h1>
         <div id="trip-info">
-            <span>Driving on the <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
+            <span>Driving on <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
             <span>Bus #<strong>@Html.Raw(Model.Bus.BusNumber)</strong>.</span>
         </div>
     </div>
@@ -36,6 +36,7 @@
             <input type="hidden" asp-for="Entry.Stop.Id" value="@Model.SelectedStopId"/>
             <div>
                 <input type="submit" class="btn btn-primary" id="entry-creator-button" value="Next Stop"/>
+                <a class="btn btn-danger" id="end-trip-button" asp-controller="Driver" asp-action="SelectBusLoop">End Trip</a>
             </div>
         </form>
     </div>
