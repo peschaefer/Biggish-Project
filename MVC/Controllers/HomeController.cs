@@ -36,9 +36,8 @@ public class HomeController : Controller
     {
         var drivers = await _driverRepository.GetDrivers();
 
-        foreach (var driver in drivers) {
-            Console.WriteLine(driver.Id);
-        }
+        drivers = drivers.Where(d => !d.IsManager).ToList();
+        
         var viewModel = new DashboardViewModel
         {
             Drivers = drivers

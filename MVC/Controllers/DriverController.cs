@@ -14,30 +14,34 @@ public class DriverController : Controller
 {
     private readonly ILoopRepository _loopRepository;
     private readonly IBusRepository _busRepository;
-    private readonly IEntryRepository _entryRepository;
     private readonly IRouteRepository _routeRepository;
     private readonly UserManager<Driver> _userManager;
+    private readonly SignInManager<Driver> _signInManager;
     private readonly ILogger<DriverController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public DriverController(ILoopRepository loopRepository, IBusRepository busRepository,
-        IEntryRepository entryRepository, IRouteRepository routeRepository, ILogger<DriverController> logger, UserManager<Driver> userManager)
+        IHttpContextAccessor contextAccessor, IRouteRepository routeRepository, ILogger<DriverController> logger, UserManager<Driver> userManager, SignInManager<Driver> signInManager)
     {
         _loopRepository = loopRepository;
         _busRepository = busRepository;
-        _entryRepository = entryRepository;
+        _httpContextAccessor = contextAccessor;
         _routeRepository = routeRepository;
         _logger = logger;
         _userManager = userManager;
+        _signInManager = signInManager;
     }
-
+    
     public async Task<IActionResult> SelectBusLoop()
     {
         ViewData["BusId"] = new SelectList(await _busRepository.GetBuses(), "Id", "BusNumber");
         ViewData["LoopId"] = new SelectList(await _loopRepository.GetLoops(), "Id", "Name");
+        ViewData["IsActive"] = User.HasClaim("IsActive", "true");
         return View();
     }
 
     [HttpPost]
+    [Authorize(Policy = "ActiveOnly")]
     public async Task<IActionResult> StartDriving(int BusId, int LoopId)
     {
         Bus selectedBus = await _busRepository.GetBus(BusId);
@@ -45,6 +49,8 @@ public class DriverController : Controller
         _logger.LogInformation("Bus id {id} started driving on loop {loop} at {time}", BusId, selectedLoop.Name ,DateTime.Now);
         return RedirectToAction("EntryCreator", new { BusId = selectedBus.Id, LoopId = selectedLoop.Id });
     }
+
+    [Authorize(Policy = "ActiveOnly")]
 
     public async Task<IActionResult> EntryCreator(int BusId, int LoopId)
     {
@@ -77,7 +83,7 @@ public class DriverController : Controller
         }
 
         // Add the approval claim to the user
-        var result = await _userManager.AddClaimAsync(user, new Claim("IsApproved", "true"));
+        var result = await _userManager.AddClaimAsync(user, new Claim("IsActive", "true"));
         _logger.LogInformation("User with id {userId} approved at {time}.", userId, DateTime.Now);
 
         if (!result.Succeeded)
@@ -88,8 +94,18 @@ public class DriverController : Controller
 
         // If the claim was added successfully, update the user
         await _userManager.UpdateAsync(user);
+        var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+        
+        if (identity != null)
+        {
+            identity.AddClaim(new Claim("IsActive", "true"));
+            // Redirect to the Driver Index action method
+            return RedirectToAction("Dashboard", "Home");
+        }
 
-        // Redirect to the Driver Index action method
-        return RedirectToAction("Dashboard","Home");
+        // Sign out the user
+        await _signInManager.SignOutAsync();
+        // Redirect to the Login page
+        return RedirectToAction("Login", "User");
     }
 }
