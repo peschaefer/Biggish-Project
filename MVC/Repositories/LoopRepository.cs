@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
+using Route = MVC.Models.Route;
 
 namespace MVC.Repositories
 {
@@ -10,6 +11,7 @@ namespace MVC.Repositories
         Task<int> AddLoop(Loop loop);
         Task<Loop> UpdateLoop(Loop loop);
         Task<List<Loop>> DeleteLoops(int[] ids);
+        Task<Loop> AddLoopWithRoutes(Loop loop, List<Route> routes);
     }
 
     public class LoopRepository : ILoopRepository
@@ -70,5 +72,14 @@ namespace MVC.Repositories
             await _context.SaveChangesAsync();
             return loopsToDelete;
         }
+        
+        public async Task<Loop> AddLoopWithRoutes(Loop loop, List<Route> routes)
+        {
+            loop.Routes = routes;
+            _context.Loops.Add(loop);
+            await _context.SaveChangesAsync();
+            return loop;
+        }
+
     }
 }
