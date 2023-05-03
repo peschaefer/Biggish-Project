@@ -85,6 +85,7 @@ namespace MVC.Controllers
                     if (user.IsManager)
                     {
                         await _userManager.AddClaimAsync(user, new Claim("IsManager", "true"));
+                        await _userManager.AddClaimAsync(user, new Claim("IsActive", "true"));
                     }
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);

@@ -70,6 +70,7 @@ public class DriverController : Controller
         return View(entryCreatorViewModel);
     }
 
+    [Authorize(Policy = "ManagerOnly")]
     public async Task<IActionResult> ApproveDriver(string userId)
     {
         _logger.LogInformation("Approve Driver called for user {id} at {time}.", userId ,DateTime.Now);
