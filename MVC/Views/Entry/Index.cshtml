@@ -15,9 +15,12 @@
     <hr id="separator">
     <div id="filters">
         <div class="filter">
-            <label for="filterAttribute">Filter by:</label>
-            <select id="filterAttribute">
-                <option value="">Select Attribute...</option>
+            <button type="button" class="btn btn-secondary" id="toggleFilterPanelButton">Show Filters</button>
+        </div>
+        <div class="filter">
+            <label for="sortBy">Sort by:</label>
+            <select id="sortBy">
+                <option value="">Select Sort Option...</option>
                 <option value="bus">Bus</option>
                 <option value="driver">Driver</option>
                 <option value="loop">Loop</option>
@@ -25,15 +28,54 @@
             </select>
         </div>
         <div class="filter">
-            <label for="sortBy">Sort by:</label>
-            <select id="sortBy">
-                <option value="">Select Sort Option...</option>
-                <option value="timestamp">Timestamp</option>
-                <option value="bus">Bus</option>
-                <option value="driver">Driver</option>
-                <option value="loop">Loop</option>
-                <option value="stop">Stop</option>
+            <label for="sortBy">Order:</label>
+            <select id="sortOrder">
+                <option value="">Select Sort Order...</option>
+                <option value="ascending">Ascending</option>
+                <option value="descending">Descending</option>
             </select>
+        </div>
+        <div id="filterPanelContainer" style="display: none;">
+            <div class="filter-section">
+                <h5>Bus:</h5>
+                @foreach (var bus in Model.Select(e => e.Bus.BusNumber).Distinct())
+                {
+                    <div class="filter-option">
+                        <input type="checkbox" name="busFilter" value="@bus" />
+                        <label>#@bus</label>
+                    </div>
+                }
+            </div>
+            <div class="filter-section">
+                <h5>Driver:</h5>
+                @foreach (var driver in Model.Select(e => new { e.Driver.FirstName, e.Driver.LastName }).Distinct())
+                {
+                    <div class="filter-option">
+                        <input type="checkbox" name="driverFilter" value="@driver.FirstName @driver.LastName" />
+                        <label>@driver.FirstName @driver.LastName</label>
+                    </div>
+                }
+            </div>
+            <div class="filter-section">
+                <h5>Loop:</h5>
+                @foreach (var loop in Model.Select(e => e.Loop.Name).Distinct())
+                {
+                    <div class="filter-option">
+                        <input type="checkbox" name="loopFilter" value="@loop" />
+                        <label>@loop</label>
+                    </div>
+                }
+            </div>
+            <div class="filter-section">
+                <h5>Stop:</h5>
+                @foreach (var stop in Model.Select(e => e.Stop.Name).Distinct())
+                {
+                    <div class="filter-option">
+                        <input type="checkbox" name="stopFilter" value="@stop" />
+                        <label>@stop</label>
+                    </div>
+                }
+            </div>
         </div>
     </div>
     <table id="entry-table" class="table table-striped">
@@ -59,13 +101,13 @@
                     <td>
                         <input type="checkbox" name="entryCheckbox" data-entry-id="@entry.Id">
                     </td>
-                    <td>@entry.Bus.BusNumber</td>
-                    <td>@entry.Driver.FirstName @entry.Driver.LastName</td>
-                    <td>@entry.Loop.Name</td>
-                    <td>@entry.Stop.Name</td>
-                    <td>@entry.Boarded</td>
-                    <td>@entry.LeftBehind</td>
-                    <td>@entry.Timestamp</td>
+                    <td data-attribute="bus">@entry.Bus.BusNumber</td>
+                    <td data-attribute="driver">@entry.Driver.FirstName @entry.Driver.LastName</td>
+                    <td data-attribute="loop">@entry.Loop.Name</td>
+                    <td data-attribute="stop">@entry.Stop.Name</td>
+                    <td data-attribute="boarded">@entry.Boarded</td>
+                    <td data-attribute="leftbehind">@entry.LeftBehind</td>
+                    <td data-attribute="timestamp">@entry.Timestamp</td>
                     <td>
                         <a onclick="showEditEntryModal(@entry.Id)" class="btn btn-secondary">Edit</a>
                     </td>
@@ -75,10 +117,7 @@
     </table>
 </div>
 
-@* <!-- Create Entry Modal -->
-@await Html.PartialAsync("_CreateEntryModal", new MVC.Models.Entry())
-
-<!-- Delete Entry Modal -->
+@* <!-- Delete Entry Modal -->
 @await Html.PartialAsync("_DeleteEntryModal")
 
 <!-- Edit Entry Modal -->
@@ -88,4 +127,33 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/entry_actions.js"></script>
+
+    <script>
+        function toggleFilterPanel() {
+            const filterPanelContainer = document.getElementById("filterPanelContainer");
+            const toggleFilterPanelButton = document.getElementById("toggleFilterPanelButton");
+
+            if (filterPanelContainer.style.display === "none") {
+                filterPanelContainer.style.display = "block";
+                toggleFilterPanelButton.textContent = "Hide Filters";
+            } else {
+                filterPanelContainer.style.display = "none";
+                toggleFilterPanelButton.textContent = "Show Filters";
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById("toggleFilterPanelButton").addEventListener("click", toggleFilterPanel);
+        
+        document.getElementById("sortBy").addEventListener("change", applyFilterAndSort);
+        document.getElementById("sortOrder").addEventListener("change", applyFilterAndSort);
+
+        const filterCheckboxes = document.querySelectorAll('input[type="checkbox"][name$="Filter"]');
+
+        filterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", applyFilterAndSort);
+        });
+
+    </script>
 }

@@ -20,7 +20,7 @@
 
 #filters {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     margin: 30px;
 }
 
@@ -76,7 +76,21 @@
     margin-right: 50px;
 }
 
-#create-button {
+#filterPanelContainer {
     display: flex;
-    margin-left: auto;
+    flex-basis: 100%;
+    height: fit-content;
+    margin-top: 20px;
+    padding: 10px 30px;
+    border: 1px solid #cacaca;
+    border-radius: 5px;
+}
+
+.filter-section {
+    margin: 20px 0px 20px 0px;
+}
+
+.filter-option {
+    margin-left: 20px;
+    font-size: 17px;
 }
