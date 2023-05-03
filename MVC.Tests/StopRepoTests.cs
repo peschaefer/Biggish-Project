@@ -7,100 +7,79 @@ namespace MVC.Tests;
 
 public class StopRepoTests
 {
-    Stop stop1 = new Stop()
+    private BigishProjContext GetDbContext()
     {
-        Id = 1,
-        Name = "Test",
-        Latitude = 0.0,
-        Longitude = 0.0
-    };
-
-
-    [Fact]
-    public async void TestAddStop()
-    {
-        var connection = new SqliteConnection("DataSource=:memory:");
-
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
+        var options = new DbContextOptionsBuilder<BigishProjContext>()
+            .UseInMemoryDatabase(databaseName: $"TestDb-{Guid.NewGuid()}")
             .Options;
 
-        var context = new BigishProjContext(option);
-
-        StopRepository stopRepository = new StopRepository(context);
-        stopRepository.AddStop(stop1);
-        var retrievedEntry = context.Stops.FindAsync(1);
-
-        Assert.Equal(stop1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(stop1.Name, retrievedEntry.Result.Name);
-        Assert.Equal(stop1.Latitude, retrievedEntry.Result.Latitude);
-        Assert.Equal(stop1.Longitude, retrievedEntry.Result.Longitude);
-
-        var deletion = stopRepository.DeleteStops(new int[1]);
+        return new BigishProjContext(options);
     }
 
     [Fact]
-    public async void TestGetStop()
+    public async Task TestAddAndGetStop()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new StopRepository(dbContext);
+        var newStop = new Stop { Name = "Test Stop", Latitude = 0.0, Longitude = 0.0 };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        var stopId = await repository.AddStop(newStop);
+        var addedStop = await repository.GetStop(stopId);
 
-        var context = new BigishProjContext(option);
-
-        StopRepository stopRepository = new StopRepository(context);
-        stopRepository.AddStop(stop1);
-        var retrievedEntry = stopRepository.GetStop(1);
-
-        Assert.Equal(stop1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(stop1.Name, retrievedEntry.Result.Name);
-        Assert.Equal(stop1.Latitude, retrievedEntry.Result.Latitude);
-        Assert.Equal(stop1.Longitude, retrievedEntry.Result.Longitude);
-        
-
-        var deletion = stopRepository.DeleteStops(new int[1]);
+        Assert.NotNull(addedStop);
+        Assert.Equal("Test Stop", addedStop.Name);
+        Assert.Equal(0.0, addedStop.Latitude);
+        Assert.Equal(0.0, addedStop.Longitude);
     }
 
     [Fact]
-    public async void TestUpdateStop()
+    public async Task TestGetStop()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new StopRepository(dbContext);
+        var stop1 = new Stop { Name = "Stop 1", Latitude = 0.0, Longitude = 0.0 };
+        var stop2 = new Stop { Name = "Stop 2", Latitude = 1.0, Longitude = 1.0 };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        await repository.AddStop(stop1);
+        await repository.AddStop(stop2);
 
-        var context = new BigishProjContext(option);
+        var stops = await repository.GetStops();
 
-        StopRepository stopRepository = new StopRepository(context);
-
-        stopRepository.AddStop(stop1);
-
-        Stop replacement = new Stop()
-        {
-            Id = 1,
-            Name = "New Stop",
-            Latitude = 1.4,
-            Longitude = 2.33
-        };
-
-        stopRepository.UpdateStop(replacement);
-
-        var retrievedEntry = stopRepository.GetStop(1);
-
-        Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
-        Assert.Equal(replacement.Name, retrievedEntry.Result.Name);
-        Assert.Equal(replacement.Latitude, retrievedEntry.Result.Latitude);
-        Assert.Equal(replacement.Longitude, retrievedEntry.Result.Longitude);
-
-        var deletion = stopRepository.DeleteStops(new int[1]);
+        Assert.NotNull(stops);
+        Assert.Equal(2, stops.Count);
+        Assert.Contains(stops, stop => stop.Name == "Stop 1" && stop.Latitude == 0.0 && stop.Longitude == 0.0);
+        Assert.Contains(stops, stop => stop.Name == "Stop 2" && stop.Latitude == 1.0 && stop.Longitude == 1.0);
     }
 
     [Fact]
-    public async void TestDeleteStop()
+    public async Task TestUpdateStop()
     {
-        Assert.True(false);
+        var dbContext = GetDbContext();
+        var repository = new StopRepository(dbContext);
+        var newStop = new Stop { Name = "Test Stop", Latitude = 0.0, Longitude = 0.0 };
+        var stopId = await repository.AddStop(newStop);
+        newStop.Id = stopId;
+        newStop.Latitude = 123.456;
+
+        var updatedStop = await repository.UpdateStop(newStop);
+
+        Assert.NotNull(updatedStop);
+        Assert.Equal(123.456, updatedStop.Latitude);
+    }
+
+    [Fact]
+    public async Task TestDeleteStop()
+    {
+        var dbContext = GetDbContext();
+        var repository = new StopRepository(dbContext);
+        var stop1 = new Stop { Name = "Stop 1", Latitude = 0.0, Longitude = 0.0 };
+        var stop2 = new Stop { Name = "Stop 2", Latitude = 1.0, Longitude = 1.0 };
+        var stop1Id = await repository.AddStop(stop1);
+        var stop2Id = await repository.AddStop(stop2);
+
+        await repository.DeleteStops(new int[] { stop1Id, stop2Id });
+        var remainingStops = await repository.GetStops();
+
+        Assert.Empty(remainingStops);
     }
 }

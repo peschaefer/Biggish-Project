@@ -7,89 +7,89 @@ namespace MVC.Tests;
 
 public class RouteRepoTests
 {
-    Route route1 = new Route()
+    Stop stop = new Stop()
     {
-        Id = 1,
-        Order = 1
+        Name = "Test",
+        Latitude = 0.0,
+        Longitude = 0.0
     };
 
-
-    [Fact]
-    public async void TestAddLoop()
+    Loop loop = new Loop()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        Name = "Test"
+    };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
+    private BigishProjContext GetDbContext()
+    {
+        var options = new DbContextOptionsBuilder<BigishProjContext>()
+            .UseInMemoryDatabase(databaseName: $"TestDb-{Guid.NewGuid()}")
             .Options;
 
-        var context = new BigishProjContext(option);
-
-        RouteRepository routeRepository = new RouteRepository(context);
-        routeRepository.AddRoute(route1);
-        var retrievedEntry = context.Routes.FindAsync(1);
-
-        Assert.Equal(route1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(route1.Order, retrievedEntry.Result.Order);
-
-        var deletion = routeRepository.DeleteRoutes(new int[1]);
+        return new BigishProjContext(options);
     }
 
     [Fact]
-    public async void TestGetLoop()
+    public async Task TestAddAndGetRoute()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new RouteRepository(dbContext);
+        var newRoute = new Route { Order = 0, Stop = stop, Loop = loop };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        var routeId = await repository.AddRoute(newRoute);
+        var addedRoute = await repository.GetRoute(routeId);
 
-        var context = new BigishProjContext(option);
-
-        RouteRepository routeRepository = new RouteRepository(context);
-        routeRepository.AddRoute(route1);
-        var retrievedEntry = routeRepository.GetRoute(1);
-
-        Assert.Equal(route1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(route1.Order, retrievedEntry.Result.Order);
-
-        var deletion = routeRepository.DeleteRoutes(new int[1]);
+        Assert.NotNull(addedRoute);
+        Assert.Equal(0, addedRoute.Order);
     }
 
     [Fact]
-    public async void TestUpdateLoop()
+    public async Task TestGetRoutes()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new RouteRepository(dbContext);
+        var route1 = new Route { Order = 0, Stop = stop, Loop = loop };
+        var route2 = new Route { Order = 1, Stop = stop, Loop = loop };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        await repository.AddRoute(route1);
+        await repository.AddRoute(route2);
 
-        var context = new BigishProjContext(option);
+        var routes = await repository.GetRoutes();
 
-        RouteRepository routeRepository = new RouteRepository(context);
-
-        routeRepository.AddRoute(route1);
-
-        Route replacement = new Route()
-        {
-            Id = 1,
-            Order = 75
-        };
-
-        routeRepository.UpdateRoute(replacement);
-
-        var retrievedEntry = routeRepository.GetRoute(1);
-
-        Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
-        Assert.Equal(replacement.Order, retrievedEntry.Result.Order);
-
-        var deletion = routeRepository.DeleteRoutes(new int[1]);
+        Assert.NotNull(routes);
+        Assert.Equal(2, routes.Count);
+        Assert.Contains(routes, route => route.Order == 0);
+        Assert.Contains(routes, route => route.Order == 1);
     }
 
     [Fact]
-    public async void TestDeleteEntry()
+    public async Task TestUpdateRoute()
     {
-        Assert.True(false);
+        var dbContext = GetDbContext();
+        var repository = new RouteRepository(dbContext);
+        var newRoute = new Route { Order = 0, Stop = stop, Loop = loop };
+        var routeId = await repository.AddRoute(newRoute);
+        newRoute.Id = routeId;
+        newRoute.Order = 420;
+
+        var updatedRoute = await repository.UpdateRoute(newRoute);
+
+        Assert.NotNull(updatedRoute);
+        Assert.Equal(420, updatedRoute.Order);
+    }
+
+    [Fact]
+    public async Task TestDeleteRoutes()
+    {
+        var dbContext = GetDbContext();
+        var repository = new RouteRepository(dbContext);
+        var route1 = new Route { Order = 0, Stop = stop, Loop = loop };
+        var route2 = new Route { Order = 1, Stop = stop, Loop = loop };
+        var route1Id = await repository.AddRoute(route1);
+        var route2Id = await repository.AddRoute(route2);
+
+        await repository.DeleteRoutes(new int[] { route1Id, route2Id });
+        var remainingRoutes = await repository.GetRoutes();
+
+        Assert.Empty(remainingRoutes);
     }
 }

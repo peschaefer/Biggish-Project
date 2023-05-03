@@ -7,100 +7,109 @@ namespace MVC.Tests;
 
 public class EntryRepoTests
 {
-
-    Entry entry1 = new Entry()
+    Driver driver = new Driver()
     {
-        Id = 1,
-        Timestamp = DateTime.Now,
-        Boarded = 0,
-        LeftBehind = 0
+        FirstName = "Test",
+        LastName = "Test",
+        IsManager = false,
+        IsActive = true
     };
 
-
-    [Fact]
-    public async void TestAddEntry()
+    Bus bus = new Bus()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        BusNumber = 1
+    };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
+    Route route = new Route()
+    {
+        Order = 1
+    };
+
+    Loop loop = new Loop()
+    {
+        Name = "Test"
+    };
+
+    Stop stop = new Stop()
+    {
+        Name = "Test",
+        Latitude = 0.0,
+        Longitude = 0.0
+    };
+
+    private BigishProjContext GetDbContext()
+    {
+        var options = new DbContextOptionsBuilder<BigishProjContext>()
+            .UseInMemoryDatabase(databaseName: $"TestDb-{Guid.NewGuid()}")
             .Options;
 
-        var context = new BigishProjContext(option);
-
-        EntryRepository entryRepository = new EntryRepository(context);
-        entryRepository.AddEntry(entry1);
-        var retrievedEntry = context.Entries.FindAsync(1);
-
-        Assert.Equal(entry1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(entry1.Timestamp, retrievedEntry.Result.Timestamp);
-        Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
-        Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
-
-        var deletion = entryRepository.DeleteEntries(new int[1]);
+        return new BigishProjContext(options);
     }
 
     [Fact]
-    public async void TestGetEntry()
+    public async Task TestAddAndGetEntry()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new EntryRepository(dbContext);
+        var newEntry = new Entry { Timestamp = Convert.ToDateTime("5/2/2023"), Boarded = 0, LeftBehind = 0, Driver = driver, Bus = bus, Loop = loop, Stop = stop};
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        var entryId = await repository.AddEntry(newEntry);
+        var addedEntry = await repository.GetEntry(entryId);
 
-        var context = new BigishProjContext(option);
-
-        EntryRepository entryRepository = new EntryRepository(context);
-        entryRepository.AddEntry(entry1);
-        var retrievedEntry = entryRepository.GetEntry(1);
-
-        Assert.Equal(entry1.Id, retrievedEntry.Result.Id);
-        Assert.Equal(entry1.Timestamp, retrievedEntry.Result.Timestamp);
-        Assert.Equal(entry1.Boarded, retrievedEntry.Result.Boarded);
-        Assert.Equal(entry1.LeftBehind, retrievedEntry.Result.LeftBehind);
-
-        var deletion = entryRepository.DeleteEntries(new int[1]);
+        Assert.NotNull(addedEntry);
+        Assert.Equal(Convert.ToDateTime("5/2/2023"), addedEntry.Timestamp);
+        Assert.Equal(0, addedEntry.Boarded);
+        Assert.Equal(0, addedEntry.LeftBehind);
     }
 
     [Fact]
-    public async void TestUpdateEntry()
+    public async Task TestGetEntries()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
+        var dbContext = GetDbContext();
+        var repository = new EntryRepository(dbContext);
+        var entry1 = new Entry { Timestamp = Convert.ToDateTime("5/1/2023"), Boarded = 0, LeftBehind = 0, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
+        var entry2 = new Entry { Timestamp = Convert.ToDateTime("5/2/2023"), Boarded = 1, LeftBehind = 1, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
 
-        var option = new DbContextOptionsBuilder<BigishProjContext>()
-            .UseSqlite(connection)
-            .Options;
+        await repository.AddEntry(entry1);
+        await repository.AddEntry(entry2);
 
-        var context = new BigishProjContext(option);
+        var entries = await repository.GetEntries();
 
-        EntryRepository entryRepository = new EntryRepository(context);
-
-        entryRepository.AddEntry(entry1);
-
-        Entry replacement = new Entry()
-        {
-            Id = 1,
-            Timestamp = entry1.Timestamp,
-            Boarded = 3,
-            LeftBehind = 4
-        };
-
-        entryRepository.UpdateEntry(replacement);
-
-        var retrievedEntry = entryRepository.GetEntry(1);
-
-        Assert.Equal(replacement.Id, retrievedEntry.Result.Id);
-        Assert.Equal(replacement.Timestamp, retrievedEntry.Result.Timestamp);
-        Assert.Equal(replacement.Boarded, retrievedEntry.Result.Boarded);
-        Assert.Equal(replacement.LeftBehind, retrievedEntry.Result.LeftBehind);
-
-        var deletion = entryRepository.DeleteEntries(new int[1]);
+        Assert.NotNull(entries);
+        Assert.Equal(2, entries.Count);
+        Assert.Contains(entries, entry => entry.Timestamp == Convert.ToDateTime("5/1/2023") && entry.Boarded == 0 && entry.LeftBehind == 0);
+        Assert.Contains(entries, entry => entry.Timestamp == Convert.ToDateTime("5/2/2023") && entry.Boarded == 1 && entry.LeftBehind == 1);
     }
 
     [Fact]
-    public async void TestDeleteEntry()
+    public async Task TestUpdateEntry()
     {
-        Assert.True(false);
+        var dbContext = GetDbContext();
+        var repository = new EntryRepository(dbContext);
+        var newEntry = new Entry { Timestamp = Convert.ToDateTime("5/2/2023"), Boarded = 0, LeftBehind = 0, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
+        var entryId = await repository.AddEntry(newEntry);
+        newEntry.Id = entryId;
+        newEntry.Boarded = 35;
+
+        var updatedEntry = await repository.UpdateEntry(newEntry);
+
+        Assert.NotNull(updatedEntry);
+        Assert.Equal(35, updatedEntry.Boarded);
+    }
+
+    [Fact]
+    public async Task TestDeleteEntries()
+    {
+        var dbContext = GetDbContext();
+        var repository = new EntryRepository(dbContext);
+        var entry1 = new Entry { Timestamp = Convert.ToDateTime("5/2/2023"), Boarded = 0, LeftBehind = 0, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
+        var entry2 = new Entry { Timestamp = Convert.ToDateTime("5/2/2023"), Boarded = 1, LeftBehind = 1, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
+        var entry1Id = await repository.AddEntry(entry1);
+        var entry2Id = await repository.AddEntry(entry2);
+
+        await repository.DeleteEntries(new int[] { entry1Id, entry2Id });
+        var remainingEntries = await repository.GetEntries();
+
+        Assert.Empty(remainingEntries);
     }
 }
