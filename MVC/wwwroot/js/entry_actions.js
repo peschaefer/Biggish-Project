@@ -1,3 +1,31 @@
+function showDeleteEntryModal() {
+    selectedEntryIds = $('input[name="entryCheckbox"]:checked').map(function () {
+        return parseInt($(this).data('entry-id'));
+    }).get();
+
+    var deleteEntryModal = new bootstrap.Modal(document.getElementById('deleteEntryModal'));
+    deleteEntryModal.show();
+}
+
+function deleteSelectedEntries() {
+    $.ajax({
+        type: "POST",
+        url: "/Entry/Delete",
+        data: { ids: selectedEntryIds },
+        traditional: true,
+        success: function (response) {
+            $("#selectAllCheckbox").prop('checked', false);
+            $('input[name="entryCheckbox"]').prop('checked', false);
+            var deleteEntryModal = new bootstrap.Modal(document.getElementById('deleteEntryModal'));
+            deleteEntryModal.hide();
+            location.reload();
+        },
+        error: function (response) {
+            console.error("Error while deleting the entries:", response);
+        },
+    });
+}    
+
 function applyFilterAndSort() {
     const busFilters = Array.from(document.getElementsByName("busFilter"))
         .filter(checkbox => checkbox.checked)
