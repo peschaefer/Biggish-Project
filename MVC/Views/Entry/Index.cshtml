@@ -8,9 +8,7 @@
 <div>
     <div id="entry-index-header">
         <h1>Entry Index</h1>
-        <div id="buttons">
-            <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteEntryModal()">Delete Selected</button>
-        </div>
+        <button type="button" class="btn btn-primary" id="exportButton">Export Current Entries</button>
     </div>
     <hr id="separator">
     <div id="filters">
@@ -35,6 +33,7 @@
                 <option value="descending">Descending</option>
             </select>
         </div>
+        <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteEntryModal()">Delete Selected</button>
         <div id="filterPanelContainer" style="display: none;">
             <div class="filter-section">
                 <h5>Bus:</h5>
@@ -155,5 +154,9 @@
             checkbox.addEventListener("change", applyFilterAndSort);
         });
 
+        document.getElementById("exportButton").addEventListener("click", () => {
+            const csvContent = tableToCSV();
+            downloadCSV(csvContent, "report.csv");
+        });
     </script>
 }

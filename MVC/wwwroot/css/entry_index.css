@@ -94,3 +94,8 @@
     margin-left: 20px;
     font-size: 17px;
 }
+
+#batchDeleteButton {
+    display: flex;
+    margin-left: auto;
+}

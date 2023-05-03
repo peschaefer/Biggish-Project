@@ -87,3 +87,36 @@ function applyFilterAndSort() {
         sortedRows.forEach(row => tbody.appendChild(row));
     }
 }
+
+function tableToCSV() {
+    const table = document.getElementById("entry-table");
+    const headers = Array.from(table.querySelectorAll("th"))
+        .slice(1, -1)
+        .map(header => header.textContent.trim())
+        .join(",");
+
+    const rows = Array.from(table.querySelectorAll("tbody tr"))
+        .filter(row => row.style.display !== "none")
+        .map(row =>
+            Array.from(row.querySelectorAll("td"))
+                .slice(1, -1)
+                .map(cell => cell.textContent.trim())
+                .join(",")
+        )
+        .join("\n");
+
+    return `${headers}\n${rows}`;
+}
+
+function downloadCSV(csvContent, fileName) {
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
