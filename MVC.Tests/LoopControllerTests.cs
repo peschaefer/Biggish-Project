@@ -5,6 +5,7 @@ using MVC.Controllers;
 using MVC.Models;
 using MVC.Repositories;
 using MVC.ViewModels;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace MVC.Tests;
 
@@ -111,6 +112,106 @@ public class LoopControllerTests
         loopController.ModelState.AddModelError("Routes", "At least one Route is required.");
 
         var result = await loopController.Create(createLoopViewModel) as RedirectToActionResult;
+
+        Assert.NotNull(result);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Empty(loopRepository.GetLoops().Result);
+    }
+
+    [Fact]
+    public async Task TestEditConfirmed()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var loopRepository = GetInMemoryLoopRepository(dbContext);
+        var stopRepository = GetInMemoryStopRepository(dbContext);
+        var routeRepository = GetInMemoryRouteRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        var routeVM = new RouteViewModel()
+        {
+            SelectedStopId = 0,
+            Order = 0
+        };
+        var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
+        Loop loop = new Loop
+        {
+            Name = "Test Loop",
+            Routes = new List<Route>()
+            {
+                new Route(){ Order = 1 }
+            }
+        };
+        var loopId = await loopRepository.AddLoop(loop);
+
+        var loopVM = new CreateLoopViewModel() { Loop = loop, Routes = new List<RouteViewModel>() { routeVM }, Stops = new List<Stop>() { stop } };
+
+        var result = await loopController.EditConfirmed(loopId, loopVM) as RedirectToActionResult;
+
+        Assert.NotNull(result);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Single(loopRepository.GetLoops().Result);
+    }
+
+    [Fact]
+    public async Task TestEditConfirmedInvalidState()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var loopRepository = GetInMemoryLoopRepository(dbContext);
+        var stopRepository = GetInMemoryStopRepository(dbContext);
+        var routeRepository = GetInMemoryRouteRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        loopController.ModelState.AddModelError("Test", "Something malicious is brewing");
+        var routeVM = new RouteViewModel()
+        {
+            SelectedStopId = 0,
+            Order = 0
+        };
+        var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
+        Loop loop = new Loop
+        {
+            Name = "Test Loop",
+            Routes = new List<Route>()
+            {
+                new Route(){ Order = 1 }
+            }
+        };
+        var loopId = await loopRepository.AddLoop(loop);
+
+        var loopVM = new CreateLoopViewModel() { Loop = loop, Routes = new List<RouteViewModel>() { routeVM }, Stops = new List<Stop>() { stop } };
+
+        var result = await loopController.EditConfirmed(loopId, loopVM) as RedirectToActionResult;
+
+        Assert.NotNull(result);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Single(loopRepository.GetLoops().Result);
+    }
+
+    [Fact]
+    public async Task TestDelete()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var loopRepository = GetInMemoryLoopRepository(dbContext);
+        var stopRepository = GetInMemoryStopRepository(dbContext);
+        var routeRepository = GetInMemoryRouteRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        var routeVM = new RouteViewModel()
+        {
+            SelectedStopId = 0,
+            Order = 0
+        };
+        var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
+        Loop loop = new Loop
+        {
+            Name = "Test Loop",
+            Routes = new List<Route>()
+            {
+                new Route(){ Order = 1 }
+            }
+        };
+        var loopId = await loopRepository.AddLoop(loop);
+
+        var loopVM = new CreateLoopViewModel() { Loop = loop, Routes = new List<RouteViewModel>() { routeVM }, Stops = new List<Stop>() { stop } };
+
+        var result = await loopController.DeleteConfirmed(new int[] { loopId }) as RedirectToActionResult;
 
         Assert.NotNull(result);
         Assert.Equal("Index", result.ActionName);
