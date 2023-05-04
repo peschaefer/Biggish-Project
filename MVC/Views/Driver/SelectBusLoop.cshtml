@@ -2,6 +2,7 @@
     ViewData["Title"] = "Select Bus and Loop";
     SelectList busSelectList = ViewBag.BusId as SelectList;
     SelectList loopSelectList = ViewBag.LoopId as SelectList;
+    bool isActive = ViewBag.IsActive;
     <link rel="stylesheet" href="~/css/select_bus_loop.css" />
 }
 
@@ -13,18 +14,27 @@
     </div>
     <hr id="separator">
     <div id="form-container">
-        <form id="bus-loop-select-form" asp-controller="Driver" asp-action="StartDriving" method="post">
-            <div>
-                <label class="form-label" for="BusId">Bus Number:</label>
-                <select name="BusId" id="BusId" asp-items="busSelectList"></select>
+        @if (isActive)
+        {
+            <form id="bus-loop-select-form" asp-controller="Driver" asp-action="StartDriving" method="post">
+                <div>
+                    <label class="form-label" for="BusId">Bus Number:</label>
+                    <select name="BusId" id="BusId" asp-items="busSelectList"></select>
+                </div>
+                <div>
+                    <label class="form-label" for="LoopId">Loop:</label>
+                    <select name="LoopId" id="LoopId" asp-items="loopSelectList"></select>
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-primary" id="bus-loop-select-button" value="Start Driving" />
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                You are not yet activated or need to sign out and sign back in to access this feature.
             </div>
-            <div>
-                <label class="form-label" for="LoopId">Loop:</label>
-                <select name="LoopId" id="LoopId" asp-items="loopSelectList"></select>
-            </div>
-            <div>
-                <input type="submit" class="btn btn-primary" id="bus-loop-select-button" value="Start Driving" />
-            </div>
-        </form>
+        }
     </div>
 </div>

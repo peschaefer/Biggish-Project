@@ -9,10 +9,10 @@ namespace MVC.Repositories
     public interface IDriverRepository
     {
         Task<List<Driver>> GetDrivers();
-        Task<Driver> GetDriver(int id);
-        Task<int> AddDriver(Driver driver);
+        Task<Driver> GetDriver(string id);
+        Task<string> AddDriver(Driver driver);
         Task<Driver> UpdateDriver(Driver driver);
-        Task<List<Driver>> DeleteDrivers(int[] ids);
+        Task<List<Driver>> DeleteDrivers(string[] ids);
     }
 
     public class DriverRepository : IDriverRepository
@@ -29,12 +29,12 @@ namespace MVC.Repositories
             return await _context.Drivers.ToListAsync();
         }
 
-        public async Task<Driver> GetDriver(int id)
+        public async Task<Driver> GetDriver(string id)
         {
             return await _context.Drivers.FindAsync(id);
         }
 
-        public async Task<int> AddDriver(Driver driver)
+        public async Task<string> AddDriver(Driver driver)
         {
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
@@ -60,7 +60,7 @@ namespace MVC.Repositories
             return foundDriver;
         }
 
-        public async Task<List<Driver>> DeleteDrivers(int[] ids)
+        public async Task<List<Driver>> DeleteDrivers(string[] ids)
         {
             var driversToDelete = new List<Driver>();
 
