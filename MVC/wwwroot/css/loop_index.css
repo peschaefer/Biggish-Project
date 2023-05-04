@@ -88,11 +88,17 @@
 #loop-select-menu {
     display: flex;
     margin-right: 20px;
+    align-items: center;
 }
 
 label {
     margin-right: 15px;
     text-align: center;
+    font-size: 20px;
+}
+
+select {
+    padding: 5px;
 }
 
 #loopSelect {
