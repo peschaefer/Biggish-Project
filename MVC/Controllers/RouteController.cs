@@ -12,7 +12,7 @@ namespace MVC.Controllers
         private readonly IRouteRepository _routeRepository;
         private readonly ILogger<RouteController> _logger;
 
-        public RouteController(IRouteRepository routeRepository, ILogger<RouteController> logger)
+        public RouteController(] routeRepository, ILogger<RouteController> logger)
         {
             _routeRepository = routeRepository;
             _logger = logger;
