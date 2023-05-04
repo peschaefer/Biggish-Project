@@ -2,13 +2,13 @@
 @model MVC.ViewModels.EntryCreatorViewModel
 
 @{
-    ViewData["Title"] = "Entry Creator";
+    ViewData["Title"] = "Trip Log";
     <link rel="stylesheet" href="~/css/entry_creator.css"/>
 }
 
 <div id="entry-creator-container">
     <div id="entry-creator-header">
-        <h1>Entry Creator</h1>
+        <h1>Trip Log</h1>
         <div id="trip-info">
             <span>Driving on <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
             <span>Bus #<strong>@Html.Raw(Model.Bus.BusNumber)</strong>.</span>
