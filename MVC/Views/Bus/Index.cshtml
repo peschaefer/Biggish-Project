@@ -1,13 +1,13 @@
 @model IEnumerable<MVC.Models.Bus>
 
 @{
-    ViewData["Title"] = "Bus Index";
+    ViewData["Title"] = "Buses";
     <link rel="stylesheet" href="~/css/bus_index.css" />
 }
 
 <div>
     <div id="bus-index-header">
-        <h1>Bus Index</h1>
+        <h1>Buses</h1>
         <div id="buttons">
             <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteBusModal()">Delete Selected</button>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBusModal">Create Bus</button>

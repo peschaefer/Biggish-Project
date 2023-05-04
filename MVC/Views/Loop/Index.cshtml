@@ -1,13 +1,13 @@
 @model MVC.ViewModels.LoopIndexViewModel
 
 @{
-    ViewData["Title"] = "Loop Index";
+    ViewData["Title"] = "Loops";
     <link rel="stylesheet" href="~/css/loop_index.css"/>
 }
 
 <div>
     <div id="loop-index-header">
-        <h1>Loop Index</h1>
+        <h1>Loops</h1>
         <div id="buttons">
             <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteLoopModal()">Delete Selected</button>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createLoopModal">Create Loop</button>
@@ -55,14 +55,13 @@
             <div id="loop-select-menu">
                 <label for="loopSelect" style="margin-right: 15px;">Filter by loop:</label>
                 <select id="loopSelect">
-                    <option value="">All stops</option>
+                    <option value="">Most Crowded Stop (Red)</option>
                     @foreach (var loop in Model.Loops)
                     {
                         <option value="@loop.Id">@loop.Name</option>
                     }
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" onclick="filterMapStops()">Filter stops</button>
         </div>
     </div>
     <!-- Map Partial -->
@@ -135,11 +134,7 @@
 
             // Append route row to the container
             routesContainer.appendChild(routeRow);
-
-            // Add selected stop to array
-            if (stopDropdown.value) {
-                selectedStops.push(parseInt(stopDropdown.value));
-            }
+  
         }
 
         function addRoute() {
@@ -180,5 +175,9 @@
                 updateMapMarkers(window.stopsData);
             }
         }
+    </script>
+
+    <script>
+        document.getElementById("loopSelect").addEventListener("change", filterMapStops);
     </script>
 }

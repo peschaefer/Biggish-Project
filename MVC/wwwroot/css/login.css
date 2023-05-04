@@ -1,0 +1,15 @@
+#login-form-container {
+    display: flex;
+    justify-content: left;
+}
+
+.form-group {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+    margin: 30px 0px;
+}
+
+h1 {
+    margin-top: 40px;
+}

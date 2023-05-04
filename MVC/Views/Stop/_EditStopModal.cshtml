@@ -1,14 +1,14 @@
 @model MVC.Models.Stop
 
 @{
-    <link rel="stylesheet" href="~/css/bus_index.css" />
+    <link rel="stylesheet" href="~/css/stop_index.css" />
 }
 
-<div class="modal fade" id="editStopModal" tabindex="-1" aria-labelledby="busModalLabel" aria-hidden="true">
+<div class="modal fade" id="editStopModal" tabindex="-1" aria-labelledby="stopModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div id="busModalContent" class="modal-content">
+        <div id="stopModalContent" class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fs-5" id="busModalLabel">Edit Stop</h5>
+                <h5 class="modal-title fs-5" id="stopModalLabel">Edit Stop</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -17,10 +17,20 @@
                 <form id="editStopForm">
                     <input type="hidden" id="editStopId" name="Id" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div id="bus-number-input" class="form-group">
-                        <label asp-for="Name" class="control-label">New Stop Number: </label>
+                    <div id="stop-name-input" class="form-group">
+                        <label asp-for="Name" class="control-label">New Stop Name: </label>
                         <input type="text" placeholder="Enter stop name..." asp-for="Name" name="Name" class="form-control" />
                         <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Latitude" class="control-label">Stop Latitude: </label>
+                        <input type="text" placeholder="Enter stop latitude..." asp-for="Latitude" name="Latitude" class="form-control"/>
+                        <span asp-validation-for="Latitude" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Longitude" class="control-label">Stop Longitude: </label>
+                        <input type="text" placeholder="Enter stop longitude..." asp-for="Longitude" name="Longitude" class="form-control"/>
+                        <span asp-validation-for="Longitude" class="text-danger"></span>
                     </div>
                 </form>
             </div>

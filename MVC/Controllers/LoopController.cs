@@ -16,14 +16,16 @@ namespace MVC.Controllers
         private readonly ILoopRepository _loopRepository;
         private readonly IStopRepository _stopRepository;
         private readonly IRouteRepository _routeRepository;
+        private readonly IEntryRepository _entryRepository;
         private readonly ILogger<LoopController> _logger;
 
         public LoopController(ILoopRepository loopRepository, IStopRepository stopRepository,
-            IRouteRepository routeRepository,ILogger<LoopController> logger)
+            IRouteRepository routeRepository,ILogger<LoopController> logger, IEntryRepository entryRepository)
         {
             _loopRepository = loopRepository;
             _stopRepository = stopRepository;
             _routeRepository = routeRepository;
+            _entryRepository = entryRepository;
             _logger = logger;
         }
 
@@ -33,12 +35,24 @@ namespace MVC.Controllers
         {
             var stops = await _stopRepository.GetStops();
             var loops = await _loopRepository.GetLoops();
+            var entries = await _entryRepository.GetEntries();
 
             var loopStops = new Dictionary<int, List<Stop>>();
             foreach (var loop in loops)
             {
                 loopStops.Add(loop.Id, loop.Routes.Select(r => r.Stop).ToList());
             }
+
+            var currentTime = DateTime.Now;
+            var recentEntries = entries.Where(entry => (currentTime - entry.Timestamp).TotalMinutes <= 15).ToList();
+            var stopsWithPassengerCount = stops.Select(stop => new StopWithPassengerCount
+            {
+                Id = stop.Id,
+                Name = stop.Name,
+                Latitude = stop.Latitude,
+                Longitude = stop.Longitude,
+                Passengers = recentEntries.Where(entry => entry.Stop.Id == stop.Id).Sum(entry => entry.Boarded),
+            }).ToList();
             
             var viewModel = new LoopIndexViewModel
             {
@@ -47,7 +61,7 @@ namespace MVC.Controllers
                 {
                     Stops = stops
                 },
-                MapViewModel = new MapViewModel { Stops = stops },
+                MapViewModel = new MapViewModel { Stops = stopsWithPassengerCount },
                 LoopStops = loopStops
             };
 
@@ -148,11 +162,11 @@ namespace MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> MapStops()
-        {
-            var stops = await _stopRepository.GetStops();
-            var viewModel = new MapViewModel { Stops = stops };
-            return View(viewModel);
-        }
+        // public async Task<IActionResult> MapStops()
+        // {
+        //     var stops = await _stopRepository.GetStops();
+        //     var viewModel = new MapViewModel { Stops = stops };
+        //     return View(viewModel);
+        // }
     }
 }

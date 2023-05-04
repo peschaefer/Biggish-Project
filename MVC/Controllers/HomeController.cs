@@ -26,12 +26,7 @@ public class HomeController : Controller
     {
         return View();
     }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
+    
     public async Task<IActionResult> Dashboard()
     {
         var drivers = await _driverRepository.GetDrivers();

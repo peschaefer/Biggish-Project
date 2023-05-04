@@ -2,15 +2,15 @@
 @model MVC.ViewModels.EntryCreatorViewModel
 
 @{
-    ViewData["Title"] = "Entry Creator";
+    ViewData["Title"] = "Trip Log";
     <link rel="stylesheet" href="~/css/entry_creator.css"/>
 }
 
 <div id="entry-creator-container">
     <div id="entry-creator-header">
-        <h1>Entry Creator</h1>
+        <h1>Trip Log</h1>
         <div id="trip-info">
-            <span>Driving on the <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
+            <span>Driving on <strong>@Html.Raw(Model.Loop.Name)</strong>.</span>
             <span>Bus #<strong>@Html.Raw(Model.Bus.BusNumber)</strong>.</span>
         </div>
     </div>
@@ -23,11 +23,11 @@
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.Boarded">Passengers boarded:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Boarded" class="form-control"/>
+                <input type="text" placeholder="Enter..." asp-for="Entry.Boarded" name="Entry.Boarded" class="form-control"/>
             </div>
             <div id="form-section">
                 <label class="form-label" for="Entry.LeftBehind">Passengers left behind:</label>
-                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="LeftBehind" class="form-control"/>
+                <input type="text" placeholder="Enter..." asp-for="Entry.LeftBehind" name="Entry.LeftBehind" class="form-control"/>
             </div>
             <input type="hidden" asp-for="BusId"/>
             <input type="hidden" asp-for="LoopId"/>
@@ -36,6 +36,7 @@
             <input type="hidden" asp-for="Entry.Stop.Id" value="@Model.SelectedStopId"/>
             <div>
                 <input type="submit" class="btn btn-primary" id="entry-creator-button" value="Next Stop"/>
+                <a class="btn btn-danger" id="end-trip-button" asp-controller="Driver" asp-action="SelectBusLoop">End Trip</a>
             </div>
         </form>
     </div>
@@ -48,6 +49,7 @@ document.getElementById("entry-creator-form").addEventListener("submit", functio
 
     // get the form data
     const formData = new FormData(event.target);
+    console.log("Entry form data: ", formData);
 
     // make the POST request
     fetch(event.target.action, {
@@ -66,8 +68,8 @@ document.getElementById("entry-creator-form").addEventListener("submit", functio
             }
 
             // Clear input fields
-            document.querySelector("input[name='Boarded']").value = "";
-            document.querySelector("input[name='LeftBehind']").value = "";
+            document.querySelector("input[name='Entry.Boarded']").value = "";
+            document.querySelector("input[name='Entry.LeftBehind']").value = "";
         } else {
             console.log('Error:', response.statusText);
         }

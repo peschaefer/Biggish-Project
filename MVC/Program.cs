@@ -15,8 +15,8 @@ var path = Environment.GetFolderPath(folder);
 var dbPath = Path.Join(path, "BigishProj.db");
 var connectionString = builder.Configuration.GetConnectionString("BigishProj") ?? "Data Source=BigishProj.db";
 
-//builder.Services.AddDbContext<BigishProjContext>(options => options.UseSqlite(dbPath));
-builder.Services.AddDbContext<BigishProjContext>(options => options.UseInMemoryDatabase("biggishproject"));
+builder.Services.AddDbContext<BigishProjContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+// builder.Services.AddDbContext<BigishProjContext>(options => options.UseInMemoryDatabase("biggishproject"));
 
 // Add users
 builder.Services.AddDefaultIdentity<Driver>()
@@ -72,5 +72,5 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
-await DatabaseSeeder.Seed(app.Services);
+// await DatabaseSeeder.Seed(app.Services);
 app.Run();

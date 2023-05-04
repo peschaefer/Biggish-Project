@@ -41,6 +41,10 @@
     margin-bottom: 0px;
 }
 
+select {
+    padding: 5px 10px;
+}
+
 #bus-loop-select-button {
     background-color: forestgreen;
     border-color: forestgreen;

@@ -1,13 +1,13 @@
 @model IEnumerable<MVC.Models.Stop>
 
 @{
-    ViewData["Title"] = "Stop Index";
+    ViewData["Title"] = "Stops";
     <link rel="stylesheet" href="~/css/stop_index.css"/>
 }
 
 <div>
     <div id="stop-index-header">
-        <h1>Stop Index</h1>
+        <h1>Stops</h1>
         <div id="buttons">
             <button type="button" class="btn btn-danger" id="batchDeleteButton" onclick="showDeleteStopModal()">Delete Selected</button>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createStopModal">Create Stop</button>

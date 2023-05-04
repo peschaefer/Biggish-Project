@@ -1,0 +1,91 @@
+#entry-index-viewer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#entry-index-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0px 10px 0px;
+    padding-right: 10px;
+}
+
+#separator {
+    border: none;
+    margin-bottom: 20px;
+}
+
+#filters {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 30px;
+}
+
+.filter {
+    margin-right: 30px;
+}
+
+.filter > label {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.filter > select {
+    padding: 5px;
+}
+
+#entry-table {
+    vertical-align: middle;
+}
+
+#entry-table th:first-child,
+#entry-table td:first-child {
+  text-align: left;
+  padding-left: 20px;
+}
+
+#entryModalContent {
+    padding: 15px 30px;
+}
+
+#entry-number-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    vertical-align: middle;
+    margin-bottom: 20px;
+}
+
+#entry-number-input > label {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    margin-right: 50px;
+}
+
+#filterPanelContainer {
+    display: flex;
+    flex-basis: 100%;
+    height: fit-content;
+    margin-top: 20px;
+    padding: 10px 30px;
+    border: 1px solid #cacaca;
+    border-radius: 5px;
+}
+
+.filter-section {
+    margin: 20px 0px 20px 0px;
+}
+
+.filter-option {
+    margin-left: 20px;
+    font-size: 17px;
+}
+
+#batchDeleteButton {
+    display: flex;
+    margin-left: auto;
+}

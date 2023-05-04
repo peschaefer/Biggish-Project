@@ -26,7 +26,12 @@ namespace MVC.Repositories
 
         public async Task<List<Entry>> GetEntries()
         {
-            return await _context.Entries.ToListAsync();
+            return await _context.Entries
+                .Include(e => e.Bus)
+                .Include(e => e.Driver)
+                .Include(e => e.Loop)
+                .Include(e => e.Stop)
+                .ToListAsync();
         }
 
         public async Task<Entry> GetEntry(int id)
