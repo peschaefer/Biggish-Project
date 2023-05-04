@@ -13,15 +13,13 @@ namespace MVC.Controllers
     {
         private readonly UserManager<Driver> _userManager;
         private readonly SignInManager<Driver> _signInManager;
-        private readonly IDriverRepository _driverRepository;
         private readonly ILogger<UserController> _logger;
         
-        public UserController(UserManager<Driver> userManager, SignInManager<Driver> signInManager, ILogger<UserController> logger, IDriverRepository driverRepository)
+        public UserController(UserManager<Driver> userManager, SignInManager<Driver> signInManager, ILogger<UserController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _driverRepository = driverRepository;
         }
 
         public IActionResult Login()
@@ -80,7 +78,6 @@ namespace MVC.Controllers
                     user.IsManager = false;
                     user.IsActive = false;
                 }
-                await _driverRepository.AddDriver(user);
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -88,6 +85,7 @@ namespace MVC.Controllers
                     if (user.IsManager)
                     {
                         await _userManager.AddClaimAsync(user, new Claim("IsManager", "true"));
+                        await _userManager.AddClaimAsync(user, new Claim("IsActive", "true"));
                     }
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);

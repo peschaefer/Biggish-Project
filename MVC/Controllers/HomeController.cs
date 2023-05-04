@@ -36,9 +36,10 @@ public class HomeController : Controller
     {
         var drivers = await _driverRepository.GetDrivers();
 
-        foreach (var driver in drivers) {
-            Console.WriteLine(driver.Id);
-        }
+        var activeUserIds = (await _userManager.GetUsersForClaimAsync(new Claim("IsActive", "true"))).Select(u => u.Id);
+
+        drivers = drivers.Where(d => !d.IsManager && !activeUserIds.Contains(d.Id)).ToList();
+
         var viewModel = new DashboardViewModel
         {
             Drivers = drivers

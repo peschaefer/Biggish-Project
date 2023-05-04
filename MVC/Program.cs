@@ -28,8 +28,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ManagerOnly", policy =>
         policy.RequireClaim("IsManager", "true"));
     options.AddPolicy("ActiveOnly", policy =>
-        policy.RequireClaim("IsActive", "true"));
+        policy.RequireAssertion(context =>
+            context.User.HasClaim("IsActive", "true") || context.User.HasClaim("IsManager", "true")));
 });
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -45,6 +47,7 @@ builder.Services.AddScoped<ILoopRepository, LoopRepository>();
 builder.Services.AddScoped<IRouteRepository, RouteRepository>();
 builder.Services.AddScoped<IStopRepository, StopRepository>();
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
 var app = builder.Build();
