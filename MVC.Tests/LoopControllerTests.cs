@@ -39,6 +39,11 @@ public class LoopControllerTests
     {
         return new RouteRepository(dbContext);
     }
+    
+    private IEntryRepository GetInMemoryEntryRepository(BigishProjContext dbContext)
+    {
+        return new EntryRepository(dbContext);
+    }
 
     [Fact]
     public async Task TestIndexReturnsViewWithLoopIndexViewModel()
@@ -47,7 +52,8 @@ public class LoopControllerTests
         var loopRepository = GetInMemoryLoopRepository(dbContext);
         var stopRepository = GetInMemoryStopRepository(dbContext);
         var routeRepository = GetInMemoryRouteRepository(dbContext);
-        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        var entryRepository = GetInMemoryEntryRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger(), entryRepository);
 
         var result = await loopController.Index() as ViewResult;
 
@@ -66,7 +72,8 @@ public class LoopControllerTests
         var loopRepository = GetInMemoryLoopRepository(dbContext);
         var stopRepository = GetInMemoryStopRepository(dbContext);
         var routeRepository = GetInMemoryRouteRepository(dbContext);
-        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        var entryRepository = GetInMemoryEntryRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger(), entryRepository);
 
         var stop1 = new Stop { Name = "Stop 1" };
         var stop2 = new Stop { Name = "Stop 2" };
@@ -103,7 +110,8 @@ public class LoopControllerTests
         var loopRepository = GetInMemoryLoopRepository(dbContext);
         var stopRepository = GetInMemoryStopRepository(dbContext);
         var routeRepository = GetInMemoryRouteRepository(dbContext);
-        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger());
+        var entryRepository = GetInMemoryEntryRepository(dbContext);
+        var loopController = new LoopController(loopRepository, stopRepository, routeRepository, GetLogger(), entryRepository);
 
         var createLoopViewModel = new CreateLoopViewModel();
 
