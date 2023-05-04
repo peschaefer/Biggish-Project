@@ -117,6 +117,25 @@ public class EntryControllerTests
     }
 
     [Fact]
+    public async Task TestEditConfirmedMismatchedCode()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var loopRepository = GetInMemoryLoopRepository(dbContext);
+        var stopRepository = GetInMemoryStopRepository(dbContext);
+        var entryRepository = GetInMemoryEntryRepository(dbContext);
+        var busRepository = GetInMemoryBusRepository(dbContext);
+        var entryController = new EntryController(entryRepository, stopRepository, new FakeUserManager(), busRepository, loopRepository, GetLogger());
+
+        var entry = new Entry { Timestamp = Convert.ToDateTime("5/1/2023"), Boarded = 0, LeftBehind = 0, Driver = driver, Bus = bus, Loop = loop, Stop = stop };
+        var entryId = await entryRepository.AddEntry(entry);
+        var mismatchedId = entryId * 10;
+
+        var actionResult = await entryController.EditConfirmed(mismatchedId, entry) as ActionResult;
+
+        Assert.IsType<NotFoundResult>(actionResult);
+    }
+
+    [Fact]
     public async Task TestDeleteConfirmed()
     {
         var dbContext = GetInMemoryDbContext();
