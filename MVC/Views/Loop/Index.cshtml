@@ -62,7 +62,6 @@
                     }
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" onclick="filterMapStops()">Filter stops</button>
         </div>
     </div>
     <!-- Map Partial -->
@@ -176,5 +175,9 @@
                 updateMapMarkers(window.stopsData);
             }
         }
+    </script>
+
+    <script>
+        document.getElementById("loopSelect").addEventListener("change", filterMapStops);
     </script>
 }
