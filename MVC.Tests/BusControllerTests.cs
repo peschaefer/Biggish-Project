@@ -82,4 +82,18 @@ public class BusControllerTests
         Assert.Single(busRepository.GetBuses().Result);
         Assert.Equal(123, busRepository.GetBus(busId).Result.BusNumber);
     }
+
+    [Fact]
+    public async Task TestEditConfirmedMismatchedCode()
+    {
+        var busRepository = GetInMemoryRepository();
+        var busController = new BusController(busRepository, GetLogger());
+        var bus = new Bus { BusNumber = 123 };
+        var busId = await busRepository.AddBus(bus);
+        var mismatchedId = busId * 10;
+
+        var result = await busController.EditConfirmed(mismatchedId, bus) as ActionResult;
+
+        Assert.IsType<NotFoundResult>(result);
+    }
 }
