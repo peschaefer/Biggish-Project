@@ -76,7 +76,6 @@ public class StopControllerTests
     [Fact]
     public async Task TestEditStop()
     {
-        //I may not be understanding what this does
         var stopRepository = GetInMemoryRepository();
         var stopController = new StopController(stopRepository, GetLogger());
         var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
@@ -88,6 +87,29 @@ public class StopControllerTests
 
         Assert.NotNull(actionResult);
         Assert.True(model.Name == stop.Name && model.Longitude == stop.Longitude && model.Latitude == stop.Latitude);
+    }
+
+    [Fact]
+    public async Task TestEditStopNotFound()
+    {
+        var stopRepository = GetInMemoryRepository();
+        var stopController = new StopController(stopRepository, GetLogger());
+
+        var actionResult = await stopController.Edit(781923);
+
+        Assert.IsType<NotFoundResult>(actionResult);
+    }
+
+    [Fact]
+    public async Task TestEditConfirmedStopNotFound()
+    {
+        var stopRepository = GetInMemoryRepository();
+        var stopController = new StopController(stopRepository, GetLogger());
+        var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
+
+        var actionResult = await stopController.EditConfirmed(781923, stop);
+
+        Assert.IsType<NotFoundResult>(actionResult);
     }
 
     [Fact]
@@ -109,6 +131,21 @@ public class StopControllerTests
     }
 
     [Fact]
+    public async Task TestEditConfirmedStopInvalidState()
+    {
+        var stopRepository = GetInMemoryRepository();
+        var stopController = new StopController(stopRepository, GetLogger());
+        stopController.ModelState.AddModelError("Test", "Something is wrong");
+        var stop = new Stop() { Name = "test", Latitude = 0.0, Longitude = 0.0 };
+        var stopId = await stopRepository.AddStop(stop);
+
+        var actionResult = await stopController.EditConfirmed(stopId, stop) as RedirectToActionResult;
+
+        Assert.NotNull(actionResult);
+        Assert.Equal("Index", actionResult.ActionName);
+    }
+
+    [Fact]
     public async Task TestDeleteStop()
     {
         //This reflects the GetStop() in delete
@@ -121,6 +158,17 @@ public class StopControllerTests
 
         Assert.NotNull(actionResult);
         Assert.Single(stopRepository.GetStops().Result);
+    }
+
+    [Fact]
+    public async Task TestDeleteStopNotFound()
+    {
+        var stopRepository = GetInMemoryRepository();
+        var stopController = new StopController(stopRepository, GetLogger());
+
+        var actionResult = await stopController.Delete(1337);
+
+        Assert.IsType<NotFoundResult>(actionResult);
     }
 
     [Fact]

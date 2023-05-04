@@ -89,6 +89,17 @@ public class RouteControllerTests
     }
 
     [Fact]
+    public async Task TestGetRouteNotFound()
+    {
+        var routeRepository = GetInMemoryRepository();
+        var routeController = new RouteController(routeRepository, GetLogger());
+
+        var actionResult = await routeController.GetRoute(546657);
+
+        Assert.IsType<NotFoundResult>(actionResult.Result);
+    }
+
+    [Fact]
     public async Task TestUpdateRoute()
     {
         var routeRepository = GetInMemoryRepository();
@@ -104,6 +115,20 @@ public class RouteControllerTests
 
         Assert.NotNull(result);
         Assert.Equal(200, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateRouteMismatchedCodes()
+    {
+        var routeRepository = GetInMemoryRepository();
+        var routeController = new RouteController(routeRepository, GetLogger());
+        var route = new Route() { Order = 1, Stop = stop, Loop = loop };
+        var routeId = await routeRepository.AddRoute(route);
+        var mismatchedId = routeId * 10;
+
+        var actionResult = await routeController.UpdateRoute(mismatchedId, route) as ActionResult;
+
+        Assert.IsType<BadRequestObjectResult>(actionResult);
     }
 
     [Fact]
