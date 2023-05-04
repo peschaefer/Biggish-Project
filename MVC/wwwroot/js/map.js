@@ -3,18 +3,18 @@ let markers = [];
 
 function initMap() {
     // The location of Bracken Library
-    const position = { lat: 40.20252042888084, lng: -85.40723289777657 };
+    const position = {lat: 40.20252042888084, lng: -85.40723289777657};
 
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 15,
         center: position,
     });
-    
+
 
     const stops = window.stopsData;
-    
 
-    let mostCrowdedStop = { passengers: 0 };
+
+    let mostCrowdedStop = {passengers: 0};
     console.log(stops)
 
     stops.forEach(stop => {
@@ -24,8 +24,10 @@ function initMap() {
     });
 
     stops.forEach(stop => {
-        const stopPosition = { lat: stop.latitude, lng: stop.longitude };
+        const stopPosition = {lat: stop.latitude, lng: stop.longitude};
         const isMostCrowded = stop.id === mostCrowdedStop.id;
+        if (isMostCrowded) console.log(stop)
+
         const marker = new google.maps.Marker({
             map: map,
             position: stopPosition,
@@ -44,7 +46,7 @@ function updateMapMarkers(stops) {
     markers.forEach(marker => marker.setMap(null));
     markers = [];
 
-    let mostCrowdedStop = { passengers: 0 };
+    let mostCrowdedStop = {passengers: 0};
 
     stops.forEach(stop => {
         if (stop.passengers > mostCrowdedStop.passengers) {
@@ -54,7 +56,7 @@ function updateMapMarkers(stops) {
 
     // Add new markers
     stops.forEach(stop => {
-        const stopPosition = { lat: stop.latitude, lng: stop.longitude };
+        const stopPosition = {lat: stop.latitude, lng: stop.longitude};
         const isMostCrowded = stop.id === mostCrowdedStop.id;
         const marker = new google.maps.Marker({
             map: map,
