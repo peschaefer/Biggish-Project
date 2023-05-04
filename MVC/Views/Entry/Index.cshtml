@@ -91,7 +91,6 @@
                 <th>Boarded</th>
                 <th>Left Behind</th>
                 <th>Timestamp</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -108,9 +107,6 @@
                     <td data-attribute="boarded">@entry.Boarded</td>
                     <td data-attribute="leftbehind">@entry.LeftBehind</td>
                     <td data-attribute="timestamp">@entry.Timestamp</td>
-                    <td>
-                        <a onclick="showEditEntryModal(@entry.Id)" class="btn btn-secondary">Edit</a>
-                    </td>
                 </tr>
             }
         </tbody>
@@ -119,10 +115,6 @@
 
 <!-- Delete Entry Modal -->
 @await Html.PartialAsync("_DeleteEntryModal")
-
-@* <!-- Edit Entry Modal -->
-@await Html.PartialAsync("_EditEntryModal", new MVC.Models.Entry()) *@
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
