@@ -1,19 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Moq;
 using MVC.Controllers;
 using MVC.Models;
 using MVC.Repositories;
-using MVC.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace MVC.Tests;
 
