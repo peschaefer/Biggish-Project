@@ -63,7 +63,7 @@ namespace MVC.Controllers
                     loop.Routes.Add(route);
                 }
 
-                await _loopRepository.UpdateLoop(loop);
+                await _loopRepository.AddLoop(loop);
 
                 return RedirectToAction(nameof(Index));
             }
